@@ -164,10 +164,10 @@ const processRequest = async (Request) => {
         const contentType = response.headers.get("Content-Type");
 
         if (!response.ok) {
-            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Failed to process request.");
+            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Failed to process request.", "Info");
             console.error("Failed to process request.");
         } else {
-            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Request processed successfully.");
+            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Request processed successfully.", "Info");
             console.log("Request processed successfully.");
         }
 
@@ -654,7 +654,7 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
             //Get HighlightedNode Details
             highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
 
-            logInfo += "*|" + highlightedNode + CL + typeof tenderAccId + BR + NL;
+            logInfo += "*|" + highlightedNode + CL + typeof highlightedNode + BR + NL;
             //This code will help identify the highlightedNode returned value
             await logToWorker(logInfo, LogLevel.DEBUG);
         }
@@ -667,9 +667,6 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
             ((highlightedNode === null) ? "highlightedNode is null" : await parent.TerminalApi.GetNodeType(highlightedNode));
 
         logInfo += "*|Node Type:  " + nodeType + NL;
-
-        //This code will help identify the node type if other than Item|Dc|Tender
-        await logToWorker(logInfo, LogLevel.DEBUG);
 
         switch (nodeType) {
             case "Item":
@@ -1483,3 +1480,4 @@ if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();
 if (isTest) RptCheckByTable();
 if (isTest) RoomDetailSearch();
+

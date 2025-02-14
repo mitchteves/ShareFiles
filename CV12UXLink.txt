@@ -1,4 +1,4 @@
-﻿const NL = "\n";
+const NL = "\n";
 const BR = "|";
 const CL = ":";
 const JSProgName = "CV12UXLink";
@@ -648,12 +648,20 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
 
     try {
         var logInfo = "HighlightedIndexInfo " + jsFunc + NL;
-        //Get HighlightedNode Details
-        var highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
+        var highlightedNode = null;
 
-        logInfo += "*|" + highlightedNode + CL + typeof tenderAccId + BR + NL;
-        //This code will help identify the highlightedNode returned value
-        await logToWorker(logInfo, LogLevel.DEBUG);
+        try {
+            //Get HighlightedNode Details
+            highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
+
+            logInfo += "*|" + highlightedNode + CL + typeof tenderAccId + BR + NL;
+            //This code will help identify the highlightedNode returned value
+            await logToWorker(logInfo, LogLevel.DEBUG);
+        }
+        catch (error) {
+            if (!isTest) await parent.TerminalApi.Log(JSProgName, "HighlightedIndexInfo:" + error);
+            await logToWorker("HighlightedIndexInfo " + error, LogLevel.ERROR);
+        }
 
         var nodeType = (isTest) ? ((jsFunc == "370") ? "Discount" : "Item") :
             ((highlightedNode === null) ? "highlightedNode is null" : await parent.TerminalApi.GetNodeType(highlightedNode));
@@ -1475,4 +1483,3 @@ if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();
 if (isTest) RptCheckByTable();
 if (isTest) RoomDetailSearch();
-

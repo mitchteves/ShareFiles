@@ -164,10 +164,10 @@ const processRequest = async (Request) => {
         const contentType = response.headers.get("Content-Type");
 
         if (!response.ok) {
-            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Failed to process request.", "Info");
+            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Failed to process request.", 8);
             console.error("Failed to process request.");
         } else {
-            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Request processed successfully.", "Info");
+            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Request processed successfully.", 8);
             console.log("Request processed successfully.");
         }
 
@@ -1091,9 +1091,14 @@ async function MemberDiscount() {
                 {                    
                     for (var discount of responseData.DiscountDetails)
                     { 
-                        //TODO Add Discount to Check
+                        //Get the dc value depending if Percent / Amount was set
+                        var dcValue = (parseInt(discount.DCPercent, 10) == 0) ? parseInt(discount.DCAmount, 10) : parseInt(discount.DCPercent, 10);
+                        //Add Discount to Check
+                        var result = await parent.TerminalApi.ApplyDiscountById(parseInt(discount.DCId, 10), dcValue, null);	
+
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
-                            discount.DCPercent + BR + discount.DCAmount + BR, LogLevel.INFO);
+                            discount.DCPercent + BR + discount.DCAmount + BR +
+                            "Application Status:" + result + BR, LogLevel.INFO);
                     };
 
                 }

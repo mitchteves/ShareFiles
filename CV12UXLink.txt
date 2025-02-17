@@ -1092,9 +1092,9 @@ async function MemberDiscount() {
                     for (var discount of responseData.DiscountDetails)
                     { 
                         //Get the dc value depending if Percent / Amount was set
-                        var dcValue = (parseInt(discount.DCPercent, 10) == 0) ? parseInt(discount.DCAmount, 10) : parseInt(discount.DCPercent, 10);
+                        var dcValue = (discount.DCPercent == 0) ? discount.DCAmount : discount.DCPercent;
                         //Add Discount to Check
-                        var result = await parent.TerminalApi.ApplyDiscountById(parseInt(discount.DCId, 10), dcValue, null);	
+                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);	
 
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +

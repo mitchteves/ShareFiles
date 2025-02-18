@@ -2,15 +2,15 @@ const NL = "\n";
 const BR = "|";
 const CL = ":";
 const JSProgName = "CV12UXLink";
-
 const LogLevel = Object.freeze({
-    TRACE: "T",
-    DEBUG: "D",
-    INFO: "I",
-    WARN: "W",
-    ERROR: "E",
-    CRITICAL: "C",
+    TRACE: "T", DEBUG: "D", INFO: "I",
+    WARN: "W", ERROR: "E", CRITICAL: "C",
 });
+//Used by 12UX Terminal. Testing
+const logLevel = Object.freeze({
+    "Invalid": 0, "Fatal": 1, "Error": 2, "Warning": 4,
+    "Info": 8, "Debug": 16, "Status": 32, "HighRisk": 64
+})
 
 const isTest = false;
 
@@ -164,10 +164,10 @@ const processRequest = async (Request) => {
         const contentType = response.headers.get("Content-Type");
 
         if (!response.ok) {
-            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Failed to process request.", 8);
+            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Failed to process request.", logLevel.Info);
             console.error("Failed to process request.");
         } else {
-            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Request processed successfully.", 8);
+            if (!isTest) await parent.TerminalApi.Log(JSProgName, "Request processed successfully.", logLevel.Info);
             console.log("Request processed successfully.");
         }
 
@@ -1092,9 +1092,9 @@ async function MemberDiscount() {
                     for (var discount of responseData.DiscountDetails)
                     { 
                         //Get the dc value depending if Percent / Amount was set
-                        var dcValue = (discount.DCPercent == 0) ? discount.DCAmount : discount.DCPercent;
+                        var dcValue = (discount.DCPercent == "0") ? discount.DCAmount : discount.DCPercent;
                         //Add Discount to Check
-                        var result = await parent.TerminalApi.ApplyDiscountById(String(discount.DCId), String(dcValue), null);	
+                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId,dcValue, null);	
 
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +

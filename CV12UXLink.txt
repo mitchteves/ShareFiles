@@ -1094,7 +1094,7 @@ async function MemberDiscount() {
                         //Get the dc value depending if Percent / Amount was set
                         var dcValue = (discount.DCPercent == 0) ? discount.DCAmount : discount.DCPercent;
                         //Add Discount to Check
-                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);	
+                        var result = await parent.TerminalApi.ApplyDiscountById(String(discount.DCId), String(dcValue), null);	
 
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +

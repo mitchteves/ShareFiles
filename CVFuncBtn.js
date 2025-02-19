@@ -1,4 +1,4 @@
-﻿const NL = "\n";
+const NL = "\n";
 const BR = "|";
 const CL = ":";
 const JSProgName = "CVFuncBtn"; //This class will contain all custom scripts
@@ -1083,9 +1083,19 @@ async function MemberDiscount() {
                         //Add Discount to Check
                         var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId,dcValue, null);	
 
+                        // Iterate over the properties
+                        for (let key in result) {
+                            if (result.hasOwnProperty(key)) {
+                                if (!isTest) await parent.TerminalApi.Log(JSProgName, key + CL + result[key] + BR + error);
+                                await logToWorker("*|Add Discount|" + discount.DCId + BR +
+                                    discount.DCPercent + BR + discount.DCAmount + BR +
+                                    "Result:" + key + CL + result[key] + BR, LogLevel.INFO);
+                            }
+                        }
+
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +
-                            "Application Status:" + result + BR, LogLevel.INFO);
+                            "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
                 }
             }
@@ -1539,4 +1549,3 @@ if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();
 if (isTest) RptCheckByTable();
 if (isTest) RoomDetailSearch();
-

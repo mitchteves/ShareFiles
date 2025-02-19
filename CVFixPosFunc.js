@@ -1,4 +1,4 @@
-﻿const NL = "\n";
+const NL = "\n";
 const BR = "|";
 const CL = ":";
 const JSProgName = "CVFixPosFunc"; //This class will contain all custom scripts
@@ -10,7 +10,9 @@ const isTest = false;
 (function Register() {
     try {
         if (!isTest) {
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_46", "VoidItem");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidChkEntities");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
         }
     }
     catch (error) {
@@ -83,14 +85,51 @@ const logToWorker = async (Message, LogLevel = LogLevel.INFO) => {
 // #endregion
 
 
-// #region "PreFunctionButton_46", "VoidItem"
-async function VoidItem() {
-    var jsFunc = "46";
-    var rqType = "PreFunctionButton_46";
-    var rqName = "VoidItem";
+// #region "PreVoidCheck", "PreVoidCheck"
+async function PreVoidCheck() {
+    var jsFunc = "PreVoidCheck";
+    var rqType = "PreVoidCheck";
+    var rqName = "PreVoidCheck";
 
     try {
         
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
+    }
+    catch (error) {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
+        await logToWorker(rqName + BR + error, LogLevel.ERROR);
+    }
+}
+// #endregion
+
+
+// #region "PreVoidChkEntities", "PreVoidChkEntities"
+async function PreVoidChkEntities() {
+    var jsFunc = "PreVoidChkEntities";
+    var rqType = "PreVoidChkEntities";
+    var rqName = "PreVoidChkEntities";
+
+    try {
+
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
+    }
+    catch (error) {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
+        await logToWorker(rqName + BR + error, LogLevel.ERROR);
+    }
+}
+// #endregion
+
+// #region "PreTender", "PreTender"
+async function PreTender() {
+    var jsFunc = "PreTender";
+    var rqType = "PreTender";
+    var rqName = "PreTender";
+
+    try {
+
         if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
         await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
     }

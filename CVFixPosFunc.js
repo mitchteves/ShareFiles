@@ -130,7 +130,7 @@ export default {
     CL,
     LogLevel,
     isTest,
-    PreVoidCheck,
-    PreVoidChkEntities,
-    PreItem
+    PreVoidCheck2,
+    PreVoidChkEntities2,
+    PreItem2
 };

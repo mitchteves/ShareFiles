@@ -1,25 +1,9 @@
 const NL = "\n";
 const BR = "|";
 const CL = ":";
-const JSProgName = "CVFixPosFunc"; //This class will contain all custom scripts
-const LogLevel = Object.freeze({TRACE: "T", DEBUG: "D", INFO: "I", WARN: "W", ERROR: "E", CRITICAL: "C"});
-
+const JSProgName = "CVCommonFunc"; //This class will contain all custom scripts
+const LogLevel = Object.freeze({ TRACE: "T", DEBUG: "D", INFO: "I", WARN: "W", ERROR: "E", CRITICAL: "C" });
 const isTest = false;
-
-//#region 12UX Custom Scripting Register/Subscribe for IG Bundling
-(function Register() {
-    try {
-        if (!isTest) {
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidChkEntities");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
-        }
-    }
-    catch (error) {
-        console.log("Register catch: " + error);
-    }
-})();
-//#endregion
 
 // #region Standard Function Created MMT
 // #region Get Date Time - Different Formats
@@ -86,7 +70,7 @@ const logToWorker = async (Message, LogLevel = LogLevel.INFO) => {
 
 
 // #region "PreVoidCheck", "PreVoidCheck"
-async function PreVoidCheck() {
+async function PreVoidCheck2() {
     var jsFunc = "PreVoidCheck";
     var rqType = "PreVoidCheck";
     var rqName = "PreVoidCheck";
@@ -105,7 +89,7 @@ async function PreVoidCheck() {
 
 
 // #region "PreVoidChkEntities", "PreVoidChkEntities"
-async function PreVoidChkEntities() {
+async function PreVoidChkEntities2() {
     var jsFunc = "PreVoidChkEntities";
     var rqType = "PreVoidChkEntities";
     var rqName = "PreVoidChkEntities";
@@ -122,11 +106,11 @@ async function PreVoidChkEntities() {
 }
 // #endregion
 
-// #region "PreTender", "PreTender"
-async function PreTender() {
-    var jsFunc = "PreTender";
-    var rqType = "PreTender";
-    var rqName = "PreTender";
+// #region "PreItem", "PreItem"
+async function PreItem2() {
+    var jsFunc = "PreItem";
+    var rqType = "PreItem";
+    var rqName = "PreItem";
 
     try {
 
@@ -139,3 +123,14 @@ async function PreTender() {
     }
 }
 // #endregion
+
+export default {
+    NL,
+    BR,
+    CL,
+    LogLevel,
+    isTest,
+    PreVoidCheck,
+    PreVoidChkEntities,
+    PreItem
+};

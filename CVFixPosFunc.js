@@ -1,7 +1,7 @@
 const NL = "\n";
 const BR = "|";
 const CL = ":";
-const JSProgName = "CVCommonFunc"; //This class will contain all custom scripts
+const JSProgName = "CVFixPosFunc";
 const LogLevel = Object.freeze({ TRACE: "T", DEBUG: "D", INFO: "I", WARN: "W", ERROR: "E", CRITICAL: "C" });
 const isTest = false;
 

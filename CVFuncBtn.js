@@ -1,10 +1,5 @@
-const NL = "\n";
-const BR = "|";
-const CL = ":";
-const JSProgName = "CVFuncBtn"; //This class will contain all custom scripts
-const LogLevel = Object.freeze({TRACE: "T", DEBUG: "D", INFO: "I", WARN: "W", ERROR: "E", CRITICAL: "C"});
-
-const isTest = false;
+import fixPosFunctions from './CVFixPosFunc';
+const { NL, BR, CL, LogLevel, isTest, PreVoidCheck2, PreVoidChkEntities2, PreItem2 } = fixPosFunctions;
 
 //#region 12UX Custom Scripting Register/Subscribe for IG Bundling
 (function Register() {
@@ -17,9 +12,13 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_374", "ItemDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_375", "SalesGiftGC");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_376", "PaidGiftGC");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_377", "CCDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_378", "RptCheckByTable");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_379", "RoomDetailSearch");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_480", "CCDiscountNew");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidChkEntities");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreItem", "PreItem");
         }
     }
     catch (error) {
@@ -1394,49 +1393,6 @@ async function PaidGiftGC() {
 }
 // #endregion
 
-// #region "PreFunctionButton_377", "CCDiscount"
-async function CCDiscount() {
-    var jsFunc = "377";
-    var rqType = "PreFunctionButton_377";
-    var rqName = "CCDiscount";
-    var requestData = new RequestDataStructure();
-
-    try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData);
-
-        if (isProceed) {
-            const sanizedRqData = deepStringify(requestData);
-            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
-            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
-            var responseData = await processRequest(sanizedRqData);
-
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
-}
-// #endregion
-
 // #region "PreFunctionButton_378", "RptCheckByTable"
 async function RptCheckByTable() {
     var jsFunc = "378";
@@ -1545,7 +1501,73 @@ async function RoomDetailSearch() {
 }
 // #endregion
 
+// #region "PreFunctionButton_480", "CCDiscountNew"
+async function CCDiscountNew() {
+    var jsFunc = "480";
+    var rqType = "PreFunctionButton_480";
+    var rqName = "CCDiscountNew";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess) {
+                if (!isTest) {
+                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
+                    await parent.TerminalApi.ShowCustomAlert(rqName,
+                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+                }
+
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+            }
+            else {
+                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+            }
+        }
+        else {
+            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
+        }
+
+    }
+    catch (error) {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
+        await logToWorker(rqName + BR + error, LogLevel.ERROR);
+    }
+}
+// #endregion
+
+// #region "PreTender", "PreTender"
+async function PreTender() {
+    var jsFunc = "PreTender";
+    var rqType = "PreTender";
+    var rqName = "PreTender";
+
+    try {
+
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
+    }
+    catch (error) {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
+        await logToWorker(rqName + BR + error, LogLevel.ERROR);
+    }
+}
+// #endregion
+
+async function PreVoidCheck() { await PreVoidCheck2(); }
+async function PreVoidChkEntities() { await PreVoidChkEntities2(); }
+async function PreItem() { await PreItem2(); }
+
 if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();
 if (isTest) RptCheckByTable();
 if (isTest) RoomDetailSearch();
+

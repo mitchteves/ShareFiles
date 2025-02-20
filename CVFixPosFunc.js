@@ -1,3 +1,5 @@
+//This class won't be used anymore. not applicable in bundling with 12UX Terminal.
+
 const NL = "\n";
 const BR = "|";
 const CL = ":";

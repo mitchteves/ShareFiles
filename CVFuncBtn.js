@@ -1,5 +1,9 @@
-import fixPosFunctions from './CVFixPosFunc';
-const { NL, BR, CL, LogLevel, isTest, PreVoidCheck2, PreVoidChkEntities2, PreItem2 } = fixPosFunctions;
+const NL = "\n";
+const BR = "|";
+const CL = ":";
+const JSProgName = "CVFuncBtn"; //This class will contain all custom scripts
+const LogLevel = Object.freeze({ TRACE: "T", DEBUG: "D", INFO: "I", WARN: "W", ERROR: "E", CRITICAL: "C" });
+const isTest = false;
 
 //#region 12UX Custom Scripting Register/Subscribe for IG Bundling
 (function Register() {
@@ -1544,6 +1548,42 @@ async function CCDiscountNew() {
 }
 // #endregion
 
+// #region "PreVoidCheck", "PreVoidCheck"
+async function PreVoidCheck() {
+    var jsFunc = "PreVoidCheck";
+    var rqType = "PreVoidCheck";
+    var rqName = "PreVoidCheck";
+
+    try {
+
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
+    }
+    catch (error) {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
+        await logToWorker(rqName + BR + error, LogLevel.ERROR);
+    }
+}
+// #endregion
+
+// #region "PreVoidChkEntities", "PreVoidChkEntities"
+async function PreVoidChkEntities() {
+    var jsFunc = "PreVoidChkEntities";
+    var rqType = "PreVoidChkEntities";
+    var rqName = "PreVoidChkEntities";
+
+    try {
+
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
+    }
+    catch (error) {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
+        await logToWorker(rqName + BR + error, LogLevel.ERROR);
+    }
+}
+// #endregion
+
 // #region "PreTender", "PreTender"
 async function PreTender() {
     var jsFunc = "PreTender";
@@ -1562,9 +1602,23 @@ async function PreTender() {
 }
 // #endregion
 
-async function PreVoidCheck() { await PreVoidCheck2(); }
-async function PreVoidChkEntities() { await PreVoidChkEntities2(); }
-async function PreItem() { await PreItem2(); }
+// #region "PreItem", "PreItem"
+async function PreItem() {
+    var jsFunc = "PreItem";
+    var rqType = "PreItem";
+    var rqName = "PreItem";
+
+    try {
+
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
+    }
+    catch (error) {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
+        await logToWorker(rqName + BR + error, LogLevel.ERROR);
+    }
+}
+// #endregion
 
 if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();

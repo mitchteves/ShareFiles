@@ -1251,8 +1251,19 @@ async function PreItem() {
     var jsFunc = "PreItem";
 
     try {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR);
-        await logToWorker(JSProgName + CL + jsFunc + BR, LogLevel.INFO);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData);
+    
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+    
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
 // #endregion

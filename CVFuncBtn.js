@@ -19,15 +19,20 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_378", "RptCheckByTable");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_379", "RoomDetailSearch");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_480", "CCDiscountNew");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_481", "CCLookupDc");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_486", "PrintCardSlip");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_487", "LastCardSlip");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_488", "ManualCard");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_489", "ReopenErrCard");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidChkEntities");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreCancelCheck", "PreCancelCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreItem", "PreItem");
         }
     }
-    catch (error) {
-        console.log("Register catch: " + error);
-    }
+    catch (error) { console.log("Register catch: " + error); }
 })();
 //#endregion
 
@@ -46,12 +51,6 @@ function getCurrentDateTime(format = 'YYYY-MM-DD HH:MM:SS.MMM') {
     const milliseconds = String(currentDate.getMilliseconds()).padStart(3, '0');
 
     switch (format) {
-        case 'YYYYMMDDHHMMSSMMM':
-            return `${year}${month}${day}${hours}${minutes}${seconds}${milliseconds}`;
-        case 'YYYYMMDD':
-            return `${year}${month}${day}`;
-        case 'HH:MM:SS':
-            return `${hours}:${minutes}:${seconds}`;
         case 'HH:MM:SS.MMM':
             return `${hours}:${minutes}:${seconds}.${milliseconds}`;
         default:
@@ -115,7 +114,6 @@ const logToWorker = async (Message, LogLevel = LogLevel.INFO) => {
 
     try {
         const Timestamp = getCurrentDateTime('HH:MM:SS.MMM');
-
         const response = await fetch(WORKER_API_URL, {
             method: "POST",
             headers: {
@@ -131,8 +129,7 @@ const logToWorker = async (Message, LogLevel = LogLevel.INFO) => {
         }
     } catch (error) {
         if (!isTest) await parent.TerminalApi.Log(JSProgName, "Error sending log:" + error);
-        console.error("Error sending log:", error);
-    }
+        console.error("Error sending log:", error); }
 };
 // #endregion
 
@@ -142,7 +139,6 @@ const processRequest = async (Request) => {
 
     try {
         const Timestamp = getCurrentDateTime('HH:MM:SS.MMM');
-
         const response = await fetch(WORKER_API_URL, {
             method: "POST",
             headers: {
@@ -171,19 +167,15 @@ const processRequest = async (Request) => {
             logToWorker("Text Response Received: " + responseText, LogLevel.DEBUG);
             return responseText;  // Return plain string
         }
-
     } catch (error) {
         if (!isTest) await parent.TerminalApi.Log(JSProgName, "Error sending log:" + error);
-        console.error("Error sending log:", error);
-    }
+        console.error("Error sending log:", error); }
 };
 // #endregion
 // #endregion
 
 // #region Get All Terminal Information Functions IG/Test Format
 async function GetTerminalInfo(jsFunc, rqData) {
-    if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetTerminalInfo");
-
     try {
         //2025-01-24T00:00:00+09:00:string|10:47:08.7016193:string|33:number|17:number|
         //Oak Bar:string|17:number|2:number|
@@ -194,26 +186,6 @@ async function GetTerminalInfo(jsFunc, rqData) {
         var profitCenterName = (isTest) ? "profitCenterName" : await parent.TerminalApi.GetProfitCenterNameById(String(profitCenterId));
         var profitCenterPrId = (isTest) ? "01" : await parent.TerminalApi.GetPrimaryProfitCenterId();
         var curMealPeriodId = (isTest) ? "01" : await parent.TerminalApi.GetCurrentMealPeriodId();
-
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "TerminalInfo:" +
-            terminalDate + CL + typeof terminalDate + BR +
-            terminalTime + CL + typeof terminalTime + BR +
-            terminalId + CL + typeof terminalId + BR +
-            profitCenterId + CL + typeof profitCenterId + BR +
-            profitCenterName + CL + typeof profitCenterName + BR +
-            profitCenterPrId + CL + typeof profitCenterPrId + BR +
-            curMealPeriodId + CL + typeof curMealPeriodId + BR
-        );
-
-        await logToWorker("TerminalInfo " + jsFunc + BR +
-            terminalDate + CL + typeof terminalDate + BR +
-            terminalTime + CL + typeof terminalTime + BR +
-            terminalId + CL + typeof terminalId + BR +
-            profitCenterId + CL + typeof profitCenterId + BR +
-            profitCenterName + CL + typeof profitCenterName + BR +
-            profitCenterPrId + CL + typeof profitCenterPrId + BR +
-            curMealPeriodId + CL + typeof curMealPeriodId + BR
-            , LogLevel.INFO);
 
         rqData.setTerminalInfo({
             TrmDt: terminalDate,
@@ -228,15 +200,9 @@ async function GetTerminalInfo(jsFunc, rqData) {
         const sanizedRqData = deepStringify(rqData.TerminalInfo);
         const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
         await logToWorker("TerminalInfo " + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
         return true;
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "TerminalInfo:" + error);
-        await logToWorker("TerminalInfo " + error, LogLevel.ERROR);
-
-        return false;
-    }
+    } catch (error) { await logToWorker("TerminalInfo " + error, LogLevel.ERROR);
+        return false; }
 }
 // #endregion
 
@@ -247,8 +213,6 @@ async function GetCheckObjectFromIG() {
 }
 
 async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
-    if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetCheckBasicInfo");
-
     try {
         // #region Check General Information
         //|1:string|8:number|OB 42:string|330003:string|11:string|true:boolean|false:boolean|false:boolean|
@@ -269,14 +233,12 @@ async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
         var checkBalAmount = (isTest) ? "8000" : await parent.TerminalApi.GetCheckBalanceAmount(checkInfo);
         var checkServerId = (isTest) ? "01" : await parent.TerminalApi.GetCheckServerId(checkInfo);
         // #endregion
-
         // #region Menu Item & Discount Count
         //|3:number|0:number|1:number|
         var checkMenuItemCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckMenuItemCount(checkInfo);
         var itemDiscCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckItemLevelDiscountCount(checkInfo);
         var checkDiscCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckLevelDiscountCount(checkInfo);
         // #endregion
-
         // #region Check Level Financial Information
         //|true:boolean|1:number|0:number|3347:number|22314:number|18967:number|2086:number|1897:number|22950:number|
         var isTenderPresent = (isTest) ? false : await parent.TerminalApi.IsTenderPresent(checkInfo);
@@ -289,64 +251,6 @@ async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
         var checkSvcCharge = (isTest) ? "320" : await parent.TerminalApi.GetCheckServiceChargeValue(checkInfo);
         var checkGrandTotal = (isTest) ? "10000" : await parent.TerminalApi.GetCheckTotal(checkInfo);
         // #endregion
-
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "CheckBasicInfo:" +
-            employeeId + CL + typeof employeeId + BR +
-            employeeIdJobCode + CL + typeof employeeIdJobCode + BR +
-            checkTable + CL + typeof checkTable + BR +
-            checkNumber + CL + typeof checkNumber + BR +
-            checkType + CL + typeof checkType + BR +
-            isCheckOpen + CL + typeof isCheckOpen + BR +
-            isCheckRefund + CL + typeof isCheckRefund + BR +
-            isCheckReopen + CL + typeof isCheckReopen + BR +
-            checkCoverCount + CL + typeof checkCoverCount + BR +
-            checkDataTag + CL + typeof checkDataTag + BR +
-            checkGuestId + CL + typeof checkGuestId + BR +
-            checkGuestName + CL + typeof checkGuestName + BR +
-            checkBalAmount + CL + typeof checkBalAmount + BR +
-            checkServerId + CL + typeof checkServerId + BR +
-            checkMenuItemCount + CL + typeof checkMenuItemCount + BR +
-            itemDiscCount + CL + typeof itemDiscCount + BR +
-            checkDiscCount + CL + typeof checkDiscCount + BR +
-            isTenderPresent + CL + typeof isTenderPresent + BR +
-            checkTenderCount + CL + typeof checkTenderCount + BR +
-            checkChgAmount + CL + typeof checkChgAmount + BR +
-            checkDcAmount + CL + typeof checkDcAmount + BR +
-            checkSaleGrsAmount + CL + typeof checkSaleGrsAmount + BR +
-            checkSaleNetAmount + CL + typeof checkSaleNetAmount + BR +
-            checkTaxAmount + CL + typeof checkTaxAmount + BR +
-            checkSvcCharge + CL + typeof checkSvcCharge + BR +
-            checkGrandTotal + CL + typeof checkGrandTotal + BR
-        );
-
-        await logToWorker("CheckBasicInfo " + jsFunc + BR +
-            employeeId + CL + typeof employeeId + BR +
-            employeeIdJobCode + CL + typeof employeeIdJobCode + BR +
-            checkTable + CL + typeof checkTable + BR +
-            checkNumber + CL + typeof checkNumber + BR +
-            checkType + CL + typeof checkType + BR +
-            isCheckOpen + CL + typeof isCheckOpen + BR +
-            isCheckRefund + CL + typeof isCheckRefund + BR +
-            isCheckReopen + CL + typeof isCheckReopen + BR +
-            checkCoverCount + CL + typeof checkCoverCount + BR +
-            checkDataTag + CL + typeof checkDataTag + BR +
-            checkGuestId + CL + typeof checkGuestId + BR +
-            checkGuestName + CL + typeof checkGuestName + BR +
-            checkBalAmount + CL + typeof checkBalAmount + BR +
-            checkServerId + CL + typeof checkServerId + BR +
-            checkMenuItemCount + CL + typeof checkMenuItemCount + BR +
-            itemDiscCount + CL + typeof itemDiscCount + BR +
-            checkDiscCount + CL + typeof checkDiscCount + BR +
-            isTenderPresent + CL + typeof isTenderPresent + BR +
-            checkTenderCount + CL + typeof checkTenderCount + BR +
-            checkChgAmount + CL + typeof checkChgAmount + BR +
-            checkDcAmount + CL + typeof checkDcAmount + BR +
-            checkSaleGrsAmount + CL + typeof checkSaleGrsAmount + BR +
-            checkSaleNetAmount + CL + typeof checkSaleNetAmount + BR +
-            checkTaxAmount + CL + typeof checkTaxAmount + BR +
-            checkSvcCharge + CL + typeof checkSvcCharge + BR +
-            checkGrandTotal + CL + typeof checkGrandTotal + BR
-            , LogLevel.INFO);
 
         // #region requestData.setCheckBasicInfo
         rqData.setCheckBasicInfo({
@@ -391,22 +295,13 @@ async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
         const sanizedRqData = deepStringify(rqData.CheckBasicInfo);
         const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
         await logToWorker("CheckBasicInfo " + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
         await GetCheckRevenueInfo(jsFunc, rqData, checkInfo);
-
         return isCheckOpen;
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "CheckBasicInfo:" + error);
-        await logToWorker("CheckBasicInfo " + error, LogLevel.ERROR);
-
-        return false;
-    }
+    } catch (error) { await logToWorker("CheckBasicInfo " + error, LogLevel.ERROR);
+        return false; }
 }
 
 async function GetCheckRevenueInfo(jsFunc, rqData, checkInfo) {
-    if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetCheckRevenueInfo");
-
     try {
         var logInfo = "CheckRevenueInfo " + jsFunc + NL;
         // #region MANUAL Get All Rev Category Financial Info
@@ -428,47 +323,27 @@ async function GetCheckRevenueInfo(jsFunc, rqData, checkInfo) {
             }
         }
         // #endregion
-
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, logInfo);
-        await logToWorker(logInfo, LogLevel.INFO);
-
+        await logToWorker(logInfo, LogLevel.DEBUG);
         const sanizedRqData = deepStringify(rqData.CheckRevenueInfo);
         const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
         await logToWorker("CheckRevenueInfo " + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
         return true;
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "CheckRevenueInfo:" + error);
-        await logToWorker("CheckRevenueInfo " + error, LogLevel.ERROR);
-
-        return false;
-    }
+    } catch (error) { await logToWorker("CheckRevenueInfo " + error, LogLevel.ERROR);
+        return false; }
 }
 
 async function GetCheckMenuItemInfo(jsFunc, rqData, checkInfo, nodeIndex) {
-    if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetCheckMenuItemInfo");
-
     try {
-        var logInfo = "CheckMenuItemInfo " + jsFunc + NL;
         //Get Menu Item Details
+        //|chkMenuItemCnt:3:number|chkModCnt:0:number|chkSpcInstCnt:0:number|itemDcCnt:0:number|
         var checkMenuItemCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckMenuItemCount(checkInfo);
         var checkModCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckModifierCount(checkInfo);
         var checkSpcInstCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckSpecialInstructionsCount(checkInfo);
         var itemDiscCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckItemLevelDiscountCount(checkInfo);
-
-        //|chkMenuItemCnt:3:number|chkModCnt:0:number|chkSpcInstCnt:0:number|itemDcCnt:0:number|
-        logInfo += "*|chkMenuItemCnt:" + checkMenuItemCount + ":" + typeof checkMenuItemCount + BR +
-            "chkModCnt:" + checkModCount + ":" + typeof checkModCount + BR +
-            "chkSpcInstCnt:" + checkSpcInstCount + ":" + typeof checkSpcInstCount + BR +
-            "itemDcCnt:" + itemDiscCount + ":" + typeof itemDiscCount + BR + NL;
-
         var nodes = (isTest) ? "checkNodesCollection" : await parent.TerminalApi.GetCheckNodeCollection(checkInfo);
 
         for (let i = 0; i < checkMenuItemCount; i++) {
             var nodeType = (isTest) ? "Item" : await parent.TerminalApi.GetNodeType(nodes[nodeIndex + i]);
-
-            await logToWorker("*|Item nodeType: " + nodeType + BR + (nodeIndex + i), LogLevel.DEBUG);
 
             if (nodeType == "Item") {
                 //|0:number|80400:number|1:number|Sunny:string|0:number|106:number|
@@ -480,14 +355,6 @@ async function GetCheckMenuItemInfo(jsFunc, rqData, checkInfo, nodeIndex) {
                 //TODO
                 var menuItemRevCatId = (isTest) ? 1 : 1;//await parent.TerminalApi.GetMenuItemRevenueCategoryByMenuItemId(String(menuItemId));
                 var menuItemPClsId = (isTest) ? 1 : await parent.TerminalApi.GetMenuItemProductClassId(String(menuItemId));
-
-                logInfo += "*" + BR + menuItemIdx + CL + typeof menuItemIdx + BR +
-                    menuItemId + CL + typeof menuItemId + BR +
-                    menuItemQty + CL + typeof menuItemQty + BR +
-                    menuItemDesc + CL + typeof menuItemDesc + BR +
-                    menuItemBaseAmount + CL + typeof menuItemBaseAmount + BR +
-                    menuItemRevCatId + CL + typeof menuItemRevCatId + BR +
-                    menuItemPClsId + CL + typeof menuItemPClsId + BR + NL;
 
                 rqData.addToCheckMenuItemInfo({
                     ItmIdx: menuItemIdx,
@@ -501,36 +368,21 @@ async function GetCheckMenuItemInfo(jsFunc, rqData, checkInfo, nodeIndex) {
             }
         }
 
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, logInfo);
-        await logToWorker(logInfo, LogLevel.INFO);
-
         const sanizedRqData = deepStringify(rqData.CheckMenuItemInfo);
         const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
         await logToWorker("CheckMenuItemInfo " + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
         return (nodeIndex + checkMenuItemCount);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "CheckMenuItemInfo:" + error);
-        await logToWorker("CheckMenuItemInfo " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("CheckMenuItemInfo " + error, LogLevel.ERROR); }
 }
 
 async function GetCheckDiscInfo(jsFunc, rqData, checkInfo, nodeIndex) {
-    if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetCheckDiscInfo");
-
     try {
-        var logInfo = "DCInfo " + jsFunc + NL;
         //Check/Item Level Discount Information in the check
         var checkDiscCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckLevelDiscountCount(checkInfo);
-        logInfo += "*|DC checkDiscCount:  " + checkDiscCount + NL;
-
         var nodes = (isTest) ? "checkNodesCollection" : await parent.TerminalApi.GetCheckNodeCollection(checkInfo);
 
         for (let i = 0; i < checkDiscCount; i++) {
             var nodeType = (isTest) ? "Discount" : await parent.TerminalApi.GetNodeType(nodes[nodeIndex + i]);
-
-            await logToWorker("*|DC nodeType:  " + nodeType + BR + (nodeIndex + i), LogLevel.DEBUG);
 
             if (nodeType == "Discount") {
                 //|3:number|30:number|Oak Food15%:string|0:number|
@@ -539,11 +391,6 @@ async function GetCheckDiscInfo(jsFunc, rqData, checkInfo, nodeIndex) {
                 var itemDCDesc = (isTest) ? "itemDCDesc" : await parent.TerminalApi.GetCheckItemDescription(nodes[nodeIndex + i]);
                 //Not Supported
                 var itemDCBaseAmount = 0;
-
-                logInfo += "*" + BR + itemDCIdx + CL + typeof itemDCIdx + BR +
-                    itemDCId + CL + typeof itemDCId + BR +
-                    itemDCDesc + CL + typeof itemDCDesc + BR +
-                    itemDCBaseAmount + CL + typeof itemDCBaseAmount + BR + NL;
 
                 rqData.addToCheckDiscInfo({
                     DCIdx: itemDCIdx,
@@ -554,36 +401,21 @@ async function GetCheckDiscInfo(jsFunc, rqData, checkInfo, nodeIndex) {
             }
         }
 
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, logInfo);
-        await logToWorker(logInfo, LogLevel.INFO);
-
         const sanizedRqData = deepStringify(rqData.CheckDiscInfo);
         const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
         await logToWorker("CheckDiscInfo " + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
         return (nodeIndex + checkDiscCount);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "CheckDiscInfo:" + error);
-        await logToWorker("CheckDiscInfo " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("CheckDiscInfo " + error, LogLevel.ERROR); }
 }
 
 async function GetCheckTenderInfo(jsFunc, rqData, checkInfo, nodeIndex) {
-    if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetCheckTenderInfo");
-
     try {
-        var logInfo = "TenderInfo " + jsFunc + NL;
         //Get Check Tender Details
         var checkTenderCount = (isTest) ? 2 : await parent.TerminalApi.GetCheckTenderCount(checkInfo);
-        logInfo += "*|PAY checkTenderCount:  " + checkTenderCount + NL;
-
         var nodes = (isTest) ? "checkNodesCollection" : await parent.TerminalApi.GetCheckNodeCollection(checkInfo);
 
         for (let i = 0; i < checkTenderCount; i++) {
             var nodeType = (isTest) ? "Tender" : await parent.TerminalApi.GetNodeType(nodes[nodeIndex + i]);
-
-            await logToWorker("*|PAY nodeType:  " + nodeType + BR + (nodeIndex + i), LogLevel.DEBUG);
 
             if (nodeType == "Tender") {
                 //|4:number|Tender doesn't deal with Account:string|null:object|Cash:string|1:number|
@@ -591,20 +423,10 @@ async function GetCheckTenderInfo(jsFunc, rqData, checkInfo, nodeIndex) {
                 var tenderIdx = nodeIndex + i;
                 var tenderAccId = (isTest) ? 1 : await parent.TerminalApi.GetTenderAccountId(nodes[nodeIndex + i]);
                 var tenderXtrData = (isTest) ? "tenderXtrData" : await parent.TerminalApi.GetTenderExtraData(nodes[nodeIndex + i]);
-
                 var itemPayId = (isTest) ? 2 : await parent.TerminalApi.GetNodeId(nodes[nodeIndex + i]);
                 var tenderName = (isTest) ? 2 : await parent.TerminalApi.GetTenderNameById(String(itemPayId));
-
                 var itemPayDesc = (isTest) ? "itemPayDesc" : await parent.TerminalApi.GetCheckItemDescription(nodes[nodeIndex + i]);
                 var itemPayBaseAmount = (isTest) ? 1000 : await parent.TerminalApi.GetTenderAmountByNode(nodes[nodeIndex + i]);
-
-                logInfo += "*" + BR + tenderIdx + CL + typeof tenderIdx + BR +
-                    tenderAccId + CL + typeof tenderAccId + BR +
-                    tenderXtrData + CL + typeof tenderXtrData + BR +
-                    tenderName + CL + typeof tenderName + BR +
-                    itemPayId + CL + typeof itemPayId + BR +
-                    itemPayDesc + CL + typeof itemPayDesc + BR +
-                    itemPayBaseAmount + CL + typeof itemPayBaseAmount + BR + NL;
 
                 rqData.addToCheckTenderInfo({
                     TndrIdx: tenderIdx,
@@ -617,25 +439,14 @@ async function GetCheckTenderInfo(jsFunc, rqData, checkInfo, nodeIndex) {
                 });
             }
         }
-
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, logInfo);
-        await logToWorker(logInfo, LogLevel.INFO);
-
         const sanizedRqData = deepStringify(rqData.CheckTenderInfo);
         const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
         await logToWorker("CheckTenderInfo " + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
         return checkTenderCount;
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "CheckTenderInfo:" + error);
-        await logToWorker("CheckTenderInfo  " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("CheckTenderInfo  " + error, LogLevel.ERROR); }
 }
 
 async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
-    if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetHighlightedIndexInfo");
-
     try {
         var logInfo = "HighlightedIndexInfo " + jsFunc + NL;
         var highlightedNode = null;
@@ -643,19 +454,13 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
         try {
             //Get HighlightedNode Details
             highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
-
             logInfo += "*|" + highlightedNode + CL + typeof highlightedNode + BR + NL;
             //This code will help identify the highlightedNode returned value
             await logToWorker(logInfo, LogLevel.DEBUG);
-        }
-        catch (error) {
-            if (!isTest) await parent.TerminalApi.Log(JSProgName, "HighlightedIndexInfo:" + error);
-            await logToWorker("HighlightedIndexInfo " + error, LogLevel.ERROR);
-        }
+        } catch (error) { await logToWorker("HighlightedIndexInfo " + error, LogLevel.ERROR); }
 
         var nodeType = (isTest) ? ((jsFunc == "370") ? "Discount" : "Item") :
             ((highlightedNode === null) ? "highlightedNode is null" : await parent.TerminalApi.GetNodeType(highlightedNode));
-
         logInfo += "*|Node Type:  " + nodeType + NL;
 
         switch (nodeType) {
@@ -668,14 +473,6 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
                 //TODO
                 var menuItemRevCatId = (isTest) ? 1 : 1;//await parent.TerminalApi.GetMenuItemRevenueCategoryByMenuItemId(String(menuItemId));
                 var menuItemPClsId = (isTest) ? 1 : await parent.TerminalApi.GetMenuItemProductClassId(String(menuItemId));
-
-                logInfo += "*" + BR + menuItemIdx + CL + typeof menuItemIdx + BR +
-                    menuItemId + CL + typeof menuItemId + BR +
-                    menuItemQty + CL + typeof menuItemQty + BR +
-                    menuItemDesc + CL + typeof menuItemDesc + BR +
-                    menuItemBaseAmount + CL + typeof menuItemBaseAmount + BR +
-                    menuItemRevCatId + CL + typeof menuItemRevCatId + BR +
-                    menuItemPClsId + CL + typeof menuItemPClsId + BR + NL;
 
                 rqData.setHighlightedIndexInfo({
                     ItmIdx: menuItemIdx,
@@ -694,11 +491,6 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
                 //Not Supported
                 var itemDCBaseAmount = 0;
 
-                logInfo += "*" + BR + itemDCIdx + CL + typeof itemDCIdx + BR +
-                    itemDCId + CL + typeof itemDCId + BR +
-                    itemDCDesc + CL + typeof itemDCDesc + BR +
-                    itemDCBaseAmount + CL + typeof itemDCBaseAmount + BR + NL;
-
                 rqData.setHighlightedIndexInfo({
                     DCIdx: itemDCIdx,
                     DCId: itemDCId,
@@ -714,14 +506,6 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
                 var tenderName = (isTest) ? 2 : await parent.TerminalApi.GetTenderNameById(String(itemPayId));
                 var itemPayDesc = (isTest) ? "itemPayDesc" : await parent.TerminalApi.GetCheckItemDescription(highlightedNode);
                 var itemPayBaseAmount = (isTest) ? 1000 : await parent.TerminalApi.GetTenderAmountByNode(highlightedNode);
-
-                logInfo += "*" + BR + tenderIdx + CL + typeof tenderIdx + BR +
-                    tenderAccId + CL + typeof tenderAccId + BR +
-                    tenderXtrData + CL + typeof tenderXtrData + BR +
-                    tenderName + CL + typeof tenderName + BR +
-                    itemPayId + CL + typeof itemPayId + BR +
-                    itemPayDesc + CL + typeof itemPayDesc + BR +
-                    itemPayBaseAmount + CL + typeof itemPayBaseAmount + BR + NL;
 
                 rqData.setHighlightedIndexInfo({
                     TndrIdx: tenderIdx,
@@ -739,227 +523,82 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
 
         if (!isTest) await parent.TerminalApi.Log(JSProgName, logInfo);
         await logToWorker(logInfo, LogLevel.INFO);
-
         const sanizedRqData = deepStringify(rqData.HighlightedIndexInfo);
         const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
         await logToWorker("HighlightedIndexInfo " + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
         return highlightedNode;
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "HighlightedIndexInfo:" + error);
-        await logToWorker("HighlightedIndexInfo " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("HighlightedIndexInfo " + error, LogLevel.ERROR); }
 }
 // #endregion
 
 // #region Set Check Information Functions IG/Test Format
-async function SetCheckTableName(checkInfo, newTableName) {
-    try {
-        var checkTableOld = (isTest) ? "checkTableOld" : await parent.TerminalApi.GetCheckTableName(checkInfo);
-        //No return value
-        var checkTableNew = (isTest) ? newTableName : await parent.TerminalApi.SetCheckTableName(checkInfo, newTableName);
-        var checkTable = (isTest) ? newTableName : await parent.TerminalApi.GetCheckTableName(checkInfo);
-
-        var logMsg = "B:" + checkTableOld + "|A:" + newTableName + "|V:" + checkTable;
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, logMsg);
-        await logToWorker("SetCheckTableName: " + logMsg, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "SetCheckTableName:" + error);
-        await logToWorker("SetCheckTableName: " + error, LogLevel.ERROR);
-    }
-}
-
-async function SetCheckTypeId(checkInfo, newCheckTypeId) {
-    try {
-        var checkTypeIdOld = (isTest) ? "checkTypeIdOld" : await parent.TerminalApi.GetCheckTypeId(checkInfo);
-        //invoke the ModifyCheckType function, no return value
-        var checkTypeIdNew = (isTest) ? newCheckTypeId : await parent.TerminalApi.SetCheckTypeId(checkInfo);
-        var checkTypeId = (isTest) ? newCheckTypeId : await parent.TerminalApi.GetCheckTypeId(checkInfo);
-
-        var logMsg = "B:" + checkTypeIdOld + "|A:" + newCheckTypeId + "|V:" + checkTypeId;
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, logMsg);
-        await logToWorker("SetCheckTypeId: " + logMsg, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "SetCheckTypeId:" + error);
-        await logToWorker("SetCheckTypeId: " + error, LogLevel.ERROR);
-    }
-}
-
-async function ModifyCoverCount(checkInfo, newCoverCount) {
-    try {
-        var checkCoverCountOld = (isTest) ? "checkCoverCountOld" : await parent.TerminalApi.GetCheckCoverCount(checkInfo);
-        //invokes the user input modifycovercount
-        var checkCoverCountNew = (isTest) ? newCoverCount : await parent.TerminalApi.ModifyCoverCount(checkInfo);
-        var checkCoverCount = (isTest) ? newCoverCount : await parent.TerminalApi.GetCheckCoverCount(checkInfo);
-
-        var logMsg = "B:" + checkCoverCountOld + "|A:" + checkCoverCountNew + "|V:" + checkCoverCount;
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, logMsg);
-        await logToWorker("ModifyCoverCount: " + logMsg, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "ModifyCoverCount:" + error);
-        await logToWorker("ModifyCoverCount: " + error, LogLevel.ERROR);
-    }
-}
-
 //dataTagType (optional) - ga, interactiveaccount,loyalty, member, folio, and banquet
 //taggedAccount (optional)
 async function SetCheckDataTag(checkInfo, newDataTag, newDataTagType, taggedAccount) {
     try {
         var checkDataTagOld = (isTest) ? "checkDataTagOld" : await parent.TerminalApi.GetCheckDataTag(checkInfo);
-        //No return value
         var checkDataTagNew = (isTest) ? newDataTag + "-" + newDataTagType : await parent.TerminalApi.SetCheckDataTag(checkInfo, newDataTag, newDataTagType, taggedAccount);
         var checkDataTag = (isTest) ? newDataTag : await parent.TerminalApi.GetCheckDataTag(checkInfo);
-
         var logMsg = "B:" + checkDataTagOld + "|A:" + newDataTag + "|V:" + checkDataTag;
         if (!isTest) await parent.TerminalApi.Log(JSProgName, logMsg);
         await logToWorker("SetCheckDataTag: " + logMsg, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "SetCheckDataTag:" + error);
-        await logToWorker("SetCheckDataTag: " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("SetCheckDataTag: " + error, LogLevel.ERROR); }
 }
 
 async function SetCheckGuestId(checkInfo, newGuestId) {
     try {
         var checkGuestIdOld = (isTest) ? "checkTableOld" : await parent.TerminalApi.GetCheckGuestId(checkInfo);
-        //No Return Value
         var checkGuestIdNew = (isTest) ? newGuestId : await parent.TerminalApi.SetCheckGuestId(checkInfo, newGuestId);
         var checkGuestId = (isTest) ? newGuestId : await parent.TerminalApi.GetCheckGuestId(checkInfo);
-
         var logMsg = "B:" + checkGuestIdOld + "|A:" + newGuestId + "|V:" + checkGuestId;
         if (!isTest) await parent.TerminalApi.Log(JSProgName, logMsg);
         await logToWorker("SetCheckGuestId: " + logMsg, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "SetCheckGuestId:" + error);
-        await logToWorker("SetCheckGuestId: " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("SetCheckGuestId: " + error, LogLevel.ERROR); }
 }
 
 async function SetCheckGuestName(checkInfo, newGuestName) {
     try {
         var checkGuestNameOld = (isTest) ? "checkTableOld" : await parent.TerminalApi.GetCheckGuestName(checkInfo);
-        //no return value
         var checkGuestNameNew = (isTest) ? newGuestName : await parent.TerminalApi.SetCheckGuestName(checkInfo, newGuestName);
         var checkGuestName = (isTest) ? newGuestName : await parent.TerminalApi.GetCheckGuestName(checkInfo);
-
         var logMsg = "B:" + checkGuestNameOld + "|A:" + newGuestName + "|V:" + checkGuestName;
         if (!isTest) await parent.TerminalApi.Log(JSProgName, logMsg);
         await logToWorker("SetCheckGuestName: " + logMsg, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "SetCheckGuestName:" + error);
-        await logToWorker("SetCheckGuestName: " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("SetCheckGuestName: " + error, LogLevel.ERROR); }
 }
 
 async function SetDataString(newDataString, index) {
     try {
         const intIndex = parseInt(index, 10);
         var checkDataStringOld = (isTest) ? "checkDataStringOld" : await parent.TerminalApi.GetDataString(intIndex);
-        //no return value
         var checkDataStringNew = (isTest) ? newDataString : await parent.TerminalApi.SetDataString(intIndex, newDataString);
         var checkDataString = (isTest) ? newDataString : await parent.TerminalApi.GetDataString(intIndex);
-
         var logMsg = "Idx:" + index + "|B:" + checkDataStringOld + "|A:" +
             newDataString + "|V:" + checkDataString;
-
         if (!isTest) await parent.TerminalApi.Log(JSProgName, logMsg);
         await logToWorker("SetDataString: " + logMsg, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "SetCheckGuestId:" + error);
-        await logToWorker("SetCheckGuestId: " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("SetCheckGuestId: " + error, LogLevel.ERROR); }
 }
 // #endregion
 
 // #region TODO Add/Change Check MenuItem/DC/Tax/SvcChg Functions IG/Test Format
 async function AddMenuItem(menuItemId, menuItemQty) {
     var textTest = "AddMenuItem:" + menuItemId + BR + menuItemQty;
-
     try {
-        //TODO
         (isTest) ? textTest : await parent.TerminalApi.AddMenuItem(menuItemId, menuItemQty);
         if (!isTest) await parent.TerminalApi.Log(JSProgName, "FC AddMenuItem - " + textTest);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "AddMenuItem:" + error);
-        await logToWorker("AddMenuItem: " + error, LogLevel.ERROR);
-    }
-}
-async function ApplyDiscount(checkInfo) {
-    try {
-        //TODO
-        var applyDiscount = (isTest) ? "applyDiscount" : await parent.TerminalApi.ApplyDiscount(checkInfo);
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "FC ApplyDiscount - " + applyDiscount);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "ApplyDiscount:" + error);
-        await logToWorker("ApplyDiscount: " + error, LogLevel.ERROR);
-    }
-}
-async function ModifyServiceChargeAmount(checkInfo) {
-    try {
-        //TODO
-        var modifySvcChgAmount = (isTest) ? "modifySvcChgAmount" : await parent.TerminalApi.ModifyServiceChargeAmount(checkInfo);
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "FC ModifyServiceChargeAmount - " + modifySvcChgAmount);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "ModifyServiceChargeAmount:" + error);
-        await logToWorker("ModifyServiceChargeAmount: " + error, LogLevel.ERROR);
-    }
-}
-async function ModifyServiceChargePercent(checkInfo) {
-    try {
-        //TODO
-        var modifySvcChgPercent = (isTest) ? "modifySvcChgPercent" : await parent.TerminalApi.ModifyServiceChargePercent(checkInfo);
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "FC ModifyServiceChargePercent - " + modifySvcChgPercent);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "ModifyServiceChargePercent:" + error);
-        await logToWorker("ModifyServiceChargePercent: " + error, LogLevel.ERROR);
-    }
-}
-async function UpdateCheckTaxAmount(checkInfo) {
-    try {
-        //TODO
-        var updateChkTaxAmount = (isTest) ? "updateChkTaxAmount" : await parent.TerminalApi.UpdateCheckTaxAmount(checkInfo);
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "FC UpdateCheckTaxAmount - " + updateChkTaxAmount);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "UpdateCheckTaxAmount:" + error);
-        await logToWorker("UpdateCheckTaxAmount: " + error, LogLevel.ERROR);
-    }
-}
-async function ApplyTypedSpecialInstruction(nodeObject) {
-    try {
-        //TODO
-        var applyTypedSpcInstr = (isTest) ? "applyTypedSpcInstr" : await parent.TerminalApi.ApplyTypedSpecialInstruction(nodeObject);
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "FC ApplyTypedSpecialInstruction - " + applyTypedSpcInstr);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "ApplyTypedSpecialInstruction:" + error);
-        await logToWorker("ApplyTypedSpecialInstruction: " + error, LogLevel.ERROR);
-    }
+    } catch (error) { await logToWorker("AddMenuItem: " + error, LogLevel.ERROR); }
 }
 // #endregion
 
 // #region GetAllInfo Call Terminal & Check Functions as applicable
 async function GetAllInfo(jsFunc, rqType, rqName, requestData) {
-
     var isSuccess = false;
-
     try {
         requestData.setRequestInfo({ RqType: rqType, RqName: rqName });
 
         await logToWorker("RequestInfo " + jsFunc + BR + requestData.RequestInfo.RqType + BR +
-            requestData.RequestInfo.RqName + BR, LogLevel.INFO);
+            requestData.RequestInfo.RqName + BR, LogLevel.DEBUG);
 
         var isTerminalInfoOK = await GetTerminalInfo(jsFunc, requestData);
         if (!isTest) await parent.TerminalApi.Log(JSProgName, "isTerminalInfoOK:" + isTerminalInfoOK);
@@ -982,17 +621,12 @@ async function GetAllInfo(jsFunc, rqType, rqName, requestData) {
             }
             isSuccess = true;
         }
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetAllInfo:" + error);
-        await logToWorker("GetAllInfo " + error, LogLevel.ERROR);
-    }
-
+    } catch (error) { await logToWorker("GetAllInfo " + error, LogLevel.ERROR); }
     return isSuccess;
 }
 // #endregion
 
-// #region "PreFunctionButton_370", "MemberInquiry"
+// #region "PreFunctionButton_370", "MemberInquiry" - For Testing
 async function MemberInquiry() {
     var jsFunc = "370";
     var rqType = "PreFunctionButton_370";
@@ -1009,33 +643,17 @@ async function MemberInquiry() {
 
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
         }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+        else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
-// #region "PreFunctionButton_371", "MemberDiscount"
+// #region "PreFunctionButton_371", "MemberDiscount" - For Testing|Pending Result AppliedDc Update
 async function MemberDiscount() {
     var jsFunc = "371";
     var rqType = "PreFunctionButton_371";
@@ -1049,22 +667,13 @@ async function MemberDiscount() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-
                 var checkInfo = await GetCheckObjectFromIG();
                 await SetCheckGuestId(checkInfo, responseData.GuestId);
                 await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
@@ -1072,13 +681,10 @@ async function MemberDiscount() {
 
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {
-                    await SetDataString(dataString.Data, dataString.Idx);
-                };
+                    await SetDataString(dataString.Data, dataString.Idx); };
 
-                //Analyze Response
-                //If Discount Details are provided, apply to the check
-                if (responseData.ApplyDiscount)
-                {                    
+                //Analyze Response - If Discount Details are provided, apply to the check
+                if (responseData.ApplyDiscount) {                    
                     for (var discount of responseData.DiscountDetails)
                     { 
                         //Get the dc value depending if Percent / Amount was set
@@ -1086,35 +692,18 @@ async function MemberDiscount() {
                         //Add Discount to Check
                         var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId,dcValue, null);	
 
-                        // Iterate over the properties
-                        for (let key in result) {
-                            if (result.hasOwnProperty(key)) {
-                                if (!isTest) await parent.TerminalApi.Log(JSProgName, key + CL + result[key] + BR + error);
-                                await logToWorker("*|Add Discount|" + discount.DCId + BR +
-                                    discount.DCPercent + BR + discount.DCAmount + BR +
-                                    "Result:" + key + CL + result[key] + BR, LogLevel.INFO);
-                            }
-                        }
-
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +
                             "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
                 }
             }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
-// #region "PreFunctionButton_372", "EmployeeDiscount"
+// #region "PreFunctionButton_372", "EmployeeDiscount" - For Testing|Pending Result AppliedDc Update
 async function EmployeeDiscount() {
     var jsFunc = "372";
     var rqType = "PreFunctionButton_372";
@@ -1128,22 +717,14 @@ async function EmployeeDiscount() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
             }
             else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-
                 var checkInfo = await GetCheckObjectFromIG();
                 await SetCheckGuestId(checkInfo, responseData.GuestId);
                 await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
@@ -1151,11 +732,9 @@ async function EmployeeDiscount() {
 
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {
-                    await SetDataString(dataString.Data, dataString.Idx);
-                };
+                    await SetDataString(dataString.Data, dataString.Idx); };
 
-                //Analyze Response
-                //If Discount Details are provided, apply to the check
+                //Analyze Response - If Discount Details are provided, apply to the check
                 if (responseData.ApplyDiscount) {
                     for (var discount of responseData.DiscountDetails) {
                         //Get the dc value depending if Percent / Amount was set
@@ -1165,24 +744,16 @@ async function EmployeeDiscount() {
 
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +
-                            "Application Status:" + result + BR, LogLevel.INFO);
+                            "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
                 }
             }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
-// #region "PreFunctionButton_373", "CheckDiscount"
+// #region "PreFunctionButton_373", "CheckDiscount" - For Testing|Pending Result AppliedDc Update
 async function CheckDiscount() {
     var jsFunc = "373";
     var rqType = "PreFunctionButton_373";
@@ -1196,32 +767,21 @@ async function CheckDiscount() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-
                 var checkInfo = await GetCheckObjectFromIG();
                 await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
 
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {
-                    await SetDataString(dataString.Data, dataString.Idx);
-                };
+                    await SetDataString(dataString.Data, dataString.Idx); };
 
-                //Analyze Response
-                //If Discount Details are provided, apply to the check
+                //Analyze Response - If Discount Details are provided, apply to the check
                 if (responseData.ApplyDiscount) {
                     for (var discount of responseData.DiscountDetails) {
                         //Get the dc value depending if Percent / Amount was set
@@ -1231,24 +791,16 @@ async function CheckDiscount() {
 
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +
-                            "Application Status:" + result + BR, LogLevel.INFO);
+                            "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
                 }
             }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
-// #region "PreFunctionButton_374", "ItemDiscount"
+// #region "PreFunctionButton_374", "ItemDiscount" - For Testing & Confirmation|Pending Result AppliedDc Update
 async function ItemDiscount() {
     var jsFunc = "374";
     var rqType = "PreFunctionButton_374";
@@ -1262,20 +814,12 @@ async function ItemDiscount() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
 
                 //Set the Check DataString with the Member Dc Information
@@ -1283,8 +827,7 @@ async function ItemDiscount() {
                     await SetDataString(dataString.Data, dataString.Idx);
                 };
 
-                //Analyze Response
-                //If Discount Details are provided, apply to the check
+                //Analyze Response - If Discount Details are provided, apply to the check
                 if (responseData.ApplyDiscount) {
                     for (var discount of responseData.DiscountDetails) {
                         //Get the dc value depending if Percent / Amount was set
@@ -1294,20 +837,12 @@ async function ItemDiscount() {
 
                         await logToWorker(rqName + CL + "|Add Item Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +
-                            "Application Status:" + result + BR, LogLevel.INFO);
+                            "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
                 }
             }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
@@ -1325,32 +860,14 @@ async function SalesGiftGC() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
@@ -1368,36 +885,18 @@ async function PaidGiftGC() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
-// #region "PreFunctionButton_378", "RptCheckByTable"
+// #region "PreFunctionButton_378", "RptCheckByTable" - For Testing
 async function RptCheckByTable() {
     var jsFunc = "378";
     var rqType = "PreFunctionButton_378";
@@ -1411,36 +910,18 @@ async function RptCheckByTable() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
-// #region "PreFunctionButton_379", "RoomDetailSearch"
+// #region "PreFunctionButton_379", "RoomDetailSearch" - For Testing
 async function RoomDetailSearch() {
     var jsFunc = "379";
     var rqType = "PreFunctionButton_379";
@@ -1451,7 +932,6 @@ async function RoomDetailSearch() {
         var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData);
 
         if (isProceed) {
-
             //Add Code to ask for additional information
             var getInput = (isTest) ? "" : await parent.TerminalApi.GetUserInput("ROOM NUMBER",
                 "룸번호를 입력하고 Enter버튼을 누르세요.",
@@ -1461,14 +941,6 @@ async function RoomDetailSearch() {
                 msrTrack = 2,
                 decimalDigits = 0);
 
-            if (!isTest) await parent.TerminalApi.Log(JSProgName, "AdditionalInfo:" +
-                getInput + CL + typeof getInput + BR 
-            );
-
-            await logToWorker("AdditionalInfo " + jsFunc + BR +
-                getInput + CL + typeof getInput + BR 
-                , LogLevel.INFO);
-
             requestData.setAdditionalInfo({
                 UsrInput: getInput //Room Number
             });
@@ -1476,36 +948,19 @@ async function RoomDetailSearch() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-                }
-
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
-
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
-// #region "PreFunctionButton_480", "CCDiscountNew"
+// #region "PreFunctionButton_480", "CCDiscountNew" - For Testing|Pending Result AppliedDc Update
 async function CCDiscountNew() {
     var jsFunc = "480";
     var rqType = "PreFunctionButton_480";
@@ -1519,104 +974,286 @@ async function CCDiscountNew() {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-
             var responseData = await processRequest(sanizedRqData);
 
-            if (!responseData.IsSuccess) {
-                if (!isTest) {
-                    await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                    await parent.TerminalApi.ShowCustomAlert(rqName,
-                        JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+                var checkInfo = await GetCheckObjectFromIG();
+                await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+
+                //Set the Check DataString with the Member Dc Information
+                for (var dataString of responseData.DataStrings) {
+                    await SetDataString(dataString.Data, dataString.Idx);
+                };
+
+                //Analyze Response - If Discount Details are provided, apply to the check
+                if (responseData.ApplyDiscount) {
+                    for (var discount of responseData.DiscountDetails) {
+                        //Get the dc value depending if Percent / Amount was set
+                        var dcValue = (discount.DCPercent == "0") ? discount.DCAmount : discount.DCPercent;
+                        //Add Discount to Check
+                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);
+
+                        await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
+                            discount.DCPercent + BR + discount.DCAmount + BR +
+                            "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
+                    };
+                }
+            }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PreFunctionButton_481", "CCLookupDc" - For Testing|Pending Result AppliedDc Update
+async function CCLookupDc() {
+    var jsFunc = "481";
+    var rqType = "PreFunctionButton_481";
+    var rqName = "CCLookupDc";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+                var checkInfo = await GetCheckObjectFromIG();
+                await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+
+                //Set the Check DataString with the Member Dc Information
+                for (var dataString of responseData.DataStrings) {
+                    await SetDataString(dataString.Data, dataString.Idx);
+                };
+
+                //Analyze Response
+                //If Discount Details are provided, apply to the check
+                if (responseData.ApplyDiscount) {
+                    for (var discount of responseData.DiscountDetails) {
+                        //Get the dc value depending if Percent / Amount was set
+                        var dcValue = (discount.DCPercent == "0") ? discount.DCAmount : discount.DCPercent;
+                        //Add Discount to Check
+                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);
+
+                        await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
+                            discount.DCPercent + BR + discount.DCAmount + BR +
+                            "Application Status:" + result + BR, LogLevel.INFO);
+                    };
+
+                    //Get Latest Check information after applying the discount if any
+                    var requestData2 = new RequestDataStructure();
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CCLookupDc2", requestData2);
+
+                    if (isProceed) {
+                        const sanizedRqData2 = deepStringify(requestData2);
+                        const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
+                        await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
+                        var responseData2 = await processRequest(sanizedRqData2);
+
+                        if (!responseData2.IsSuccess && !isTest) {
+                            await parent.TerminalApi.ShowCustomAlert("CCLookupDc2",
+                                JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
+                        } else {
+                            await logToWorker("CCLookupDc2" + CL + responseData2.ResponseMessage, LogLevel.INFO);
+                        }
+                    }
                 }
 
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
             }
-            else {
-                if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + CL + responseData.ResponseMessage);
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
-        }
-        else {
-            await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO);
-        }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
 
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+// #region "PreFunctionButton_486", "PrintCardSlip" - For Testing
+async function PrintCardSlip() {
+    var jsFunc = "486";
+    var rqType = "PreFunctionButton_486";
+    var rqName = "PrintCardSlip";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData);
+
+        if (isProceed) {
+            //Add Code to ask for additional information
+            var getInput = (isTest) ? "" : await parent.TerminalApi.GetUserInput("CHECK NUMBER",
+                "첵번호를 입력하고 Enter버튼을 누르세요.",
+                "Type Check Number and Enter.",
+                isAlphaNumeric = true,
+                isMSRSwipeEnabled = true,
+                msrTrack = 2,
+                decimalDigits = 0);
+
+            requestData.setAdditionalInfo({
+                UsrInput: getInput //Check Number
+            });
+
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+            }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PreFunctionButton_487", "LastCardSlip" - For Testing
+async function LastCardSlip() {
+    var jsFunc = "487";
+    var rqType = "PreFunctionButton_487";
+    var rqName = "LastCardSlip";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PreFunctionButton_488", "ManualCard" - For Testing
+async function ManualCard() {
+    var jsFunc = "488";
+    var rqType = "PreFunctionButton_488";
+    var rqName = "ManualCard";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PreFunctionButton_489", "ReopenErrCard" - For Testing
+async function ReopenErrCard() {
+    var jsFunc = "489";
+    var rqType = "PreFunctionButton_489";
+    var rqName = "ReopenErrCard";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PreSaveCheck", "PreSaveCheck"
+async function PreSaveCheck() {
+    var jsFunc = "PreSaveCheck";
+
+    try {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR, LogLevel.INFO);
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
 // #region "PreVoidCheck", "PreVoidCheck"
 async function PreVoidCheck() {
     var jsFunc = "PreVoidCheck";
-    var rqType = "PreVoidCheck";
-    var rqName = "PreVoidCheck";
 
     try {
-
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
-        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR, LogLevel.INFO);
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
 // #region "PreVoidChkEntities", "PreVoidChkEntities"
 async function PreVoidChkEntities() {
     var jsFunc = "PreVoidChkEntities";
-    var rqType = "PreVoidChkEntities";
-    var rqName = "PreVoidChkEntities";
 
     try {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR, LogLevel.INFO);
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
 
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
-        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+// #region "PreCancelCheck", "PreCancelCheck"
+async function PreCancelCheck() {
+    var jsFunc = "PreCancelCheck";
+
+    try {
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR, LogLevel.INFO);
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
 // #region "PreTender", "PreTender"
 async function PreTender() {
     var jsFunc = "PreTender";
-    var rqType = "PreTender";
-    var rqName = "PreTender";
 
     try {
-
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
-        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR, LogLevel.INFO);
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
 // #region "PreItem", "PreItem"
 async function PreItem() {
     var jsFunc = "PreItem";
-    var rqType = "PreItem";
-    var rqName = "PreItem";
 
     try {
-
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR + rqType + BR + rqName + BR);
-        await logToWorker(JSProgName + CL + jsFunc + BR + rqType + BR + rqName + BR, LogLevel.INFO);
-    }
-    catch (error) {
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, rqName + BR + error);
-        await logToWorker(rqName + BR + error, LogLevel.ERROR);
-    }
+        if (!isTest) await parent.TerminalApi.Log(JSProgName, jsFunc + BR);
+        await logToWorker(JSProgName + CL + jsFunc + BR, LogLevel.INFO);
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 

@@ -1014,13 +1014,6 @@ async function CCLookupDc() {
         var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
-            //Add Code to ask for additional information
-            var getInput = (isTest) ? "0" : await parent.TerminalApi.GetKeyPadAmount();
-
-            requestData.setAdditionalInfo({
-                UsrInput: getInput //KeyPad Amount
-            });
-
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
@@ -1058,6 +1051,13 @@ async function CCLookupDc() {
                     isProceed = await GetAllInfo(jsFunc, rqType, "CCLookupDc2", requestData2, false, false);
 
                     if (isProceed) {
+                        //Add Code to ask for additional information
+                        var getInput = (isTest) ? "0" : await parent.TerminalApi.GetKeyPadAmount();
+
+                        requestData2.setAdditionalInfo({
+                            UsrInput: getInput //KeyPad Amount
+                        });
+
                         const sanizedRqData2 = deepStringify(requestData2);
                         const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
                         await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);

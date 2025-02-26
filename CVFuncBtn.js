@@ -25,6 +25,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_488", "ManualCard");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_489", "ReopenErrCard");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreItem", "PreItem");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidChkEntities");
@@ -581,18 +582,8 @@ async function SetDataString(newDataString, index) {
 }
 // #endregion
 
-// #region TODO Add/Change Check MenuItem/DC/Tax/SvcChg Functions IG/Test Format
-async function AddMenuItem(menuItemId, menuItemQty) {
-    var textTest = "AddMenuItem:" + menuItemId + BR + menuItemQty;
-    try {
-        (isTest) ? textTest : await parent.TerminalApi.AddMenuItem(menuItemId, menuItemQty);
-        if (!isTest) await parent.TerminalApi.Log(JSProgName, "FC AddMenuItem - " + textTest);
-    } catch (error) { await logToWorker("AddMenuItem: " + error, LogLevel.ERROR); }
-}
-// #endregion
-
 // #region GetAllInfo Call Terminal & Check Functions as applicable
-async function GetAllInfo(jsFunc, rqType, rqName, requestData, getBasicInfo) {
+async function GetAllInfo(jsFunc, rqType, rqName, requestData, getBasicInfo, getHighlightInfo) {
     var isSuccess = false;
     try {
         requestData.setRequestInfo({ RqType: rqType, RqName: rqName });
@@ -616,9 +607,13 @@ async function GetAllInfo(jsFunc, rqType, rqName, requestData, getBasicInfo) {
                 checkNodeIndex = await GetCheckDiscInfo(jsFunc, requestData, checkInfo, checkNodeIndex);
                 if (!isTest) await parent.TerminalApi.Log(JSProgName, "GetCheckTenderInfo:" + checkNodeIndex);
                 checkNodeIndex = await GetCheckTenderInfo(jsFunc, requestData, checkInfo, checkNodeIndex);
+            }
+
+            if (getHighlightInfo) {
                 //Last after getting all possible information
                 await GetHighlightedIndexInfo(jsFunc, requestData, checkInfo);
             }
+
             isSuccess = true;
         }
     } catch (error) { await logToWorker("GetAllInfo " + error, LogLevel.ERROR); }
@@ -634,7 +629,7 @@ async function MemberInquiry() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -661,7 +656,7 @@ async function MemberDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -711,7 +706,7 @@ async function EmployeeDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -761,7 +756,7 @@ async function CheckDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -808,7 +803,7 @@ async function ItemDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, true);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -854,7 +849,7 @@ async function SalesGiftGC() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -879,7 +874,7 @@ async function PaidGiftGC() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -904,7 +899,7 @@ async function RptCheckByTable() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -929,7 +924,7 @@ async function RoomDetailSearch() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             //Add Code to ask for additional information
@@ -968,7 +963,7 @@ async function CCDiscountNew() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1016,7 +1011,7 @@ async function CCLookupDc() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1053,7 +1048,7 @@ async function CCLookupDc() {
 
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "CCLookupDc2", requestData2);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CCLookupDc2", requestData2, false, false);
 
                     if (isProceed) {
                         const sanizedRqData2 = deepStringify(requestData2);
@@ -1064,12 +1059,9 @@ async function CCLookupDc() {
                         if (!responseData2.IsSuccess && !isTest) {
                             await parent.TerminalApi.ShowCustomAlert("CCLookupDc2",
                                 JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
-                        } else {
-                            await logToWorker("CCLookupDc2" + CL + responseData2.ResponseMessage, LogLevel.INFO);
-                        }
+                        } else { await logToWorker("CCLookupDc2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
                     }
                 }
-
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
@@ -1084,7 +1076,7 @@ async function PrintCardSlip() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             //Add Code to ask for additional information
@@ -1108,9 +1100,7 @@ async function PrintCardSlip() {
             if (!responseData.IsSuccess && !isTest) {
                 await parent.TerminalApi.ShowCustomAlert(rqName,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-            } else {
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
-            }
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
@@ -1124,7 +1114,7 @@ async function LastCardSlip() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1149,7 +1139,7 @@ async function ManualCard() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1174,7 +1164,7 @@ async function ReopenErrCard() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1197,7 +1187,7 @@ async function PreItem() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, false);
 
         if (isProceed) {
             //Add Code to ask for additional information
@@ -1221,13 +1211,48 @@ async function PreItem() {
 }
 // #endregion
 
+// #region "PostItem", "PostItem"
+async function PostItem() {
+    var jsFunc = "PostItem";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, true);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
+
+                //Analyze Response - If Discount Details are provided, apply to the check
+                if (responseData.AddMenuItem) {
+                    for (var item of responseData.ItemDetails) {
+                        //Add Item to Check
+                        var result = await parent.TerminalApi.AddMenuItem(item.MenuItemId, item.MenuItemQty);
+
+                        await logToWorker(rqName + CL + "|Add Item|" + item.MenuItemId + BR + item.MenuItemQty + BR +
+                            "Add Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
+                    };
+                }
+            }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
 // #region "PreSaveCheck", "PreSaveCheck"
 async function PreSaveCheck() {
     var jsFunc = "PreSaveCheck";
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1250,7 +1275,7 @@ async function PreVoidCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1273,7 +1298,7 @@ async function PreVoidChkEntities() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1296,7 +1321,7 @@ async function PreCancelCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1319,7 +1344,7 @@ async function PreTender() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             //Add Code to ask for additional information

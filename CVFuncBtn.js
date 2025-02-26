@@ -24,7 +24,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_487", "LastCardSlip");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_488", "ManualCard");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_489", "ReopenErrCard");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreItem", "PreItem");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_491", "ParnasRewardMembership");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
@@ -1014,6 +1014,13 @@ async function CCLookupDc() {
         var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
+            //Add Code to ask for additional information
+            var getInput = (isTest) ? "0" : await parent.TerminalApi.GetKeyPadAmount();
+
+            requestData.setAdditionalInfo({
+                UsrInput: getInput //KeyPad Amount
+            });
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
@@ -1181,33 +1188,29 @@ async function ReopenErrCard() {
 }
 // #endregion
 
-// #region "PreItem", "PreItem"
-async function PreItem() {
-    var jsFunc = "PreItem";
+
+// #region "PreFunctionButton_491", "ParnasRewardMembership"
+async function ParnasRewardMembership() {
+    var jsFunc = "491";
+    var rqType = "PreFunctionButton_491";
+    var rqName = "ParnasRewardMembership";
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
-            //Add Code to ask for additional information
-            var getInput = (isTest) ? "0" : await parent.TerminalApi.GetKeyPadAmount();
-
-            requestData.setAdditionalInfo({
-                UsrInput: getInput //KeyPad Amount
-            });
-
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
-            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
             var responseData = await processRequest(sanizedRqData);
 
             if (!responseData.IsSuccess && !isTest) {
-                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                await parent.TerminalApi.ShowCustomAlert(rqName,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
-        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
-    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
@@ -1236,7 +1239,7 @@ async function PostItem() {
                         //Add Item to Check
                         var result = await parent.TerminalApi.AddMenuItem(item.MenuItemId, item.MenuItemQty);
 
-                        await logToWorker(rqName + CL + "|Add Item|" + item.MenuItemId + BR + item.MenuItemQty + BR +
+                        await logToWorker(jsFunc + CL + "|Add Item|" + item.MenuItemId + BR + item.MenuItemQty + BR +
                             "Add Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
                 }

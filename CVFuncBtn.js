@@ -356,6 +356,7 @@ async function GetCheckMenuItemInfo(jsFunc, rqData, checkInfo, nodeIndex) {
                 //TODO
                 var menuItemRevCatId = (isTest) ? 1 : 1;//await parent.TerminalApi.GetMenuItemRevenueCategoryByMenuItemId(String(menuItemId));
                 var menuItemPClsId = (isTest) ? 1 : await parent.TerminalApi.GetMenuItemProductClassId(String(menuItemId));
+                var menuItemVoidId = (isTest) ? 0 : await parent.TerminalApi.GetMenuItemVoidId(nodes[nodeIndex + i]);
 
                 rqData.addToCheckMenuItemInfo({
                     ItmIdx: menuItemIdx,
@@ -364,7 +365,8 @@ async function GetCheckMenuItemInfo(jsFunc, rqData, checkInfo, nodeIndex) {
                     ItmDesc: menuItemDesc,
                     ItmBsAmt: menuItemBaseAmount,
                     ItmRCatId: menuItemRevCatId,
-                    ItmPClsId: menuItemPClsId
+                    ItmPClsId: menuItemPClsId,
+                    ItmVoidId: menuItemVoidId
                 });
             }
         }
@@ -474,6 +476,7 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
                 //TODO
                 var menuItemRevCatId = (isTest) ? 1 : 1;//await parent.TerminalApi.GetMenuItemRevenueCategoryByMenuItemId(String(menuItemId));
                 var menuItemPClsId = (isTest) ? 1 : await parent.TerminalApi.GetMenuItemProductClassId(String(menuItemId));
+                var menuItemVoidId = (isTest) ? 0 : await parent.TerminalApi.GetMenuItemVoidId(nodes[nodeIndex + i]);
 
                 rqData.setHighlightedIndexInfo({
                     ItmIdx: menuItemIdx,
@@ -482,7 +485,8 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
                     ItmDesc: menuItemDesc,
                     ItmBsAmt: menuItemBaseAmount,
                     ItmRCatId: menuItemRevCatId,
-                    ItmPClsId: menuItemPClsId
+                    ItmPClsId: menuItemPClsId,
+                    ItmVoidId: menuItemVoidId
                 });
                 break;
             case "Discount":
@@ -1020,7 +1024,7 @@ async function CCLookupDc() {
             requestData.setAdditionalInfo({
                 UsrInput: getInput //KeyPad Amount
             });
-            
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);

@@ -1343,7 +1343,7 @@ async function PreVoidChkEntities() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);

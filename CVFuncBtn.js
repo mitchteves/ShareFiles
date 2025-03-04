@@ -476,7 +476,7 @@ async function GetHighlightedIndexInfo(jsFunc, rqData, checkInfo) {
                 //TODO
                 var menuItemRevCatId = (isTest) ? 1 : 1;//await parent.TerminalApi.GetMenuItemRevenueCategoryByMenuItemId(String(menuItemId));
                 var menuItemPClsId = (isTest) ? 1 : await parent.TerminalApi.GetMenuItemProductClassId(String(menuItemId));
-                var menuItemVoidId = (isTest) ? 0 : await parent.TerminalApi.GetMenuItemVoidId(nodes[nodeIndex + i]);
+                var menuItemVoidId = (isTest) ? 0 : await parent.TerminalApi.GetMenuItemVoidId(highlightedNode);
 
                 rqData.setHighlightedIndexInfo({
                     ItmIdx: menuItemIdx,

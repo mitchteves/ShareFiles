@@ -66,6 +66,12 @@ function deepStringify(obj) {
 }
 // #endregion
 
+// #region Check if a Variable is empty
+function isEmpty(value) {
+    return value === null || value === undefined || value === '';
+}
+// #endregion
+
 // #region Define the Request Class with dynamic properties & declaration
 class RequestDataStructure {
     constructor() {
@@ -674,9 +680,9 @@ async function MemberDiscount() {
             } else {
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
                 var checkInfo = await GetCheckObjectFromIG();
-                await SetCheckGuestId(checkInfo, responseData.GuestId);
-                await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
-                await SetCheckGuestName(checkInfo, responseData.GuestName);
+                if (!isEmpty(responseData.GuestId)) await SetCheckGuestId(checkInfo, responseData.GuestId);
+                if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+                if (!isEmpty(responseData.GuestName)) await SetCheckGuestName(checkInfo, responseData.GuestName);
 
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {
@@ -725,9 +731,9 @@ async function EmployeeDiscount() {
             else {
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
                 var checkInfo = await GetCheckObjectFromIG();
-                await SetCheckGuestId(checkInfo, responseData.GuestId);
-                await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
-                await SetCheckGuestName(checkInfo, responseData.GuestName);
+                if (!isEmpty(responseData.GuestId)) await SetCheckGuestId(checkInfo, responseData.GuestId);
+                if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+                if (!isEmpty(responseData.GuestName)) await SetCheckGuestName(checkInfo, responseData.GuestName);
 
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {
@@ -774,8 +780,8 @@ async function CheckDiscount() {
             } else {
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
                 var checkInfo = await GetCheckObjectFromIG();
-                await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
-
+                if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+                
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {
                     await SetDataString(dataString.Data, dataString.Idx); };
@@ -981,7 +987,7 @@ async function CCDiscountNew() {
             } else {
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
                 var checkInfo = await GetCheckObjectFromIG();
-                await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+                if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
 
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {
@@ -1036,7 +1042,7 @@ async function CCLookupDc() {
             } else {
                 await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
                 var checkInfo = await GetCheckObjectFromIG();
-                await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+                if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
 
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {
@@ -1219,7 +1225,32 @@ async function ParnasRewardMembership() {
             if (!responseData.IsSuccess && !isTest) {
                 await parent.TerminalApi.ShowCustomAlert(rqName,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+            } else {
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+                var checkInfo = await GetCheckObjectFromIG();
+                if (!isEmpty(responseData.GuestId)) await SetCheckGuestId(checkInfo, responseData.GuestId);
+                if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+                if (!isEmpty(responseData.GuestName)) await SetCheckGuestName(checkInfo, responseData.GuestName);
+
+                //Set the Check DataString with the Member Dc Information
+                for (var dataString of responseData.DataStrings) {
+                    await SetDataString(dataString.Data, dataString.Idx);
+                };
+
+                //Analyze Response - If Discount Details are provided, apply to the check
+                if (responseData.ApplyDiscount) {
+                    for (var discount of responseData.DiscountDetails) {
+                        //Get the dc value depending if Percent / Amount was set
+                        var dcValue = (discount.DCPercent == "0") ? discount.DCAmount : discount.DCPercent;
+                        //Add Discount to Check
+                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);
+
+                        await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
+                            discount.DCPercent + BR + discount.DCAmount + BR +
+                            "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
+                    };
+                }
+            }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
 }
@@ -1312,7 +1343,7 @@ async function PreVoidChkEntities() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, true);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);

@@ -31,6 +31,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidChkEntities");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreCancelCheck", "PreCancelCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostTender", "PostTender");
         }
     }
     catch (error) { console.log("Register catch: " + error); }
@@ -79,6 +80,7 @@ class RequestDataStructure {
         this.TerminalInfo = {};
         this.HighlightedIndexInfo = {};
         this.AdditionalInfo = {};
+        this.CheckDataStringInfo = {};
         this.CheckBasicInfo = {};
         this.CheckRevenueInfo = [];
         this.CheckMenuItemInfo = [];
@@ -96,6 +98,9 @@ class RequestDataStructure {
     }
     setAdditionalInfo(data) {
         this.AdditionalInfo = data;
+    }
+    setCheckDataStringInfo(data) {
+        this.CheckDataStringInfo = data;
     }
     setCheckBasicInfo(data) {
         this.CheckBasicInfo = data;
@@ -1205,7 +1210,6 @@ async function ReopenErrCard() {
 }
 // #endregion
 
-
 // #region "PreFunctionButton_491", "ParnasRewardMembership"
 async function ParnasRewardMembership() {
     var jsFunc = "491";
@@ -1343,9 +1347,31 @@ async function PreVoidChkEntities() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, true);
 
         if (isProceed) {
+            var DataString1 = await parent.TerminalApi.GetDataString(1);
+            var DataString2 = await parent.TerminalApi.GetDataString(2);
+            var DataString3 = await parent.TerminalApi.GetDataString(3);
+            var DataString4 = await parent.TerminalApi.GetDataString(4);
+            var DataString5 = await parent.TerminalApi.GetDataString(5);
+            var DataString6 = await parent.TerminalApi.GetDataString(6);
+            var DataString7 = await parent.TerminalApi.GetDataString(7);
+            var DataString8 = await parent.TerminalApi.GetDataString(8);
+            var DataString9 = await parent.TerminalApi.GetDataString(9);
+
+            requestData.setCheckDataStringInfo({
+                DataString1: DataString1,
+                DataString2: DataString2,
+                DataString3: DataString3,
+                DataString4: DataString4,
+                DataString5: DataString5,
+                DataString6: DataString6,
+                DataString7: DataString7,
+                DataString8: DataString8,
+                DataString9: DataString9
+            });
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
@@ -1408,6 +1434,38 @@ async function PreTender() {
                 await parent.TerminalApi.ShowCustomAlert(jsFunc,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
             } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PostTender", "PostTender"
+async function PostTender() {
+    var jsFunc = "PostTender";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, true);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
+
+                var checkInfo = await GetCheckObjectFromIG();
+                var highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
+                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(56, checkInfo, highlightedNode);
+
+                await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
+                    JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+            }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }

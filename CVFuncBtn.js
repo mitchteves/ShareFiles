@@ -198,6 +198,7 @@ async function GetTerminalInfo(jsFunc, rqData) {
         var profitCenterName = (isTest) ? "profitCenterName" : await parent.TerminalApi.GetProfitCenterNameById(String(profitCenterId));
         var profitCenterPrId = (isTest) ? "01" : await parent.TerminalApi.GetPrimaryProfitCenterId();
         var curMealPeriodId = (isTest) ? "01" : await parent.TerminalApi.GetCurrentMealPeriodId();
+        var employeeId = (isTest) ? "999" : await parent.TerminalApi.GetSignedInEmpId();
 
         rqData.setTerminalInfo({
             TrmDt: terminalDate,
@@ -206,7 +207,8 @@ async function GetTerminalInfo(jsFunc, rqData) {
             PcId: profitCenterId,
             PcName: profitCenterName,
             PcPrId: profitCenterPrId,
-            CurMPId: curMealPeriodId
+            CurMPId: curMealPeriodId,
+            EmpId: employeeId
         });
 
         const sanizedRqData = deepStringify(rqData.TerminalInfo);
@@ -1461,7 +1463,7 @@ async function PostTender() {
 
                 var checkInfo = await GetCheckObjectFromIG();
                 var highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
-                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(56);
+                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction("56", checkInfo);
 
                 await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
                     JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);

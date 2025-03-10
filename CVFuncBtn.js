@@ -199,6 +199,7 @@ async function GetTerminalInfo(jsFunc, rqData) {
         var profitCenterPrId = (isTest) ? "01" : await parent.TerminalApi.GetPrimaryProfitCenterId();
         var curMealPeriodId = (isTest) ? "01" : await parent.TerminalApi.GetCurrentMealPeriodId();
         var employeeId = (isTest) ? "999" : await parent.TerminalApi.GetSignedInEmpId();
+        var employeeIdJobCode = (isTest) ? "01" : await parent.TerminalApi.GetSignedInEmpJobCodeId();
 
         rqData.setTerminalInfo({
             TrmDt: terminalDate,
@@ -208,7 +209,8 @@ async function GetTerminalInfo(jsFunc, rqData) {
             PcName: profitCenterName,
             PcPrId: profitCenterPrId,
             CurMPId: curMealPeriodId,
-            EmpId: employeeId
+            EmpId: employeeId,
+            EmpJbCd: employeeIdJobCode
         });
 
         const sanizedRqData = deepStringify(rqData.TerminalInfo);
@@ -230,8 +232,7 @@ async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
     try {
         // #region Check General Information
         //|1:string|8:number|OB 42:string|330003:string|11:string|true:boolean|false:boolean|false:boolean|
-        var employeeId = (isTest) ? "999" : await parent.TerminalApi.GetCheckCashierId(checkInfo);
-        var employeeIdJobCode = (isTest) ? "01" : await parent.TerminalApi.GetSignedInEmpJobCodeId();
+        var cashierId = (isTest) ? "999" : await parent.TerminalApi.GetCheckCashierId(checkInfo);
         var checkTable = (isTest) ? "checkTable" : await parent.TerminalApi.GetCheckTableName(checkInfo);
         var checkNumber = (isTest) ? "1111111" : await parent.TerminalApi.GetcheckNumber(checkInfo);
         var checkType = (isTest) ? "01" : await parent.TerminalApi.GetCheckTypeId(checkInfo);
@@ -269,8 +270,7 @@ async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
         // #region requestData.setCheckBasicInfo
         rqData.setCheckBasicInfo({
             // #region Check General Info
-            EmpId: employeeId,
-            EmpJbCd: employeeIdJobCode,
+            CashierId: cashierId,
             ChkTbl: checkTable,
             ChkNo: checkNumber,
             ChkType: checkType,
@@ -1352,6 +1352,7 @@ async function PreVoidChkEntities() {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, true);
 
         if (isProceed) {
+            var DataString0 = await parent.TerminalApi.GetDataString(0);
             var DataString1 = await parent.TerminalApi.GetDataString(1);
             var DataString2 = await parent.TerminalApi.GetDataString(2);
             var DataString3 = await parent.TerminalApi.GetDataString(3);
@@ -1360,9 +1361,9 @@ async function PreVoidChkEntities() {
             var DataString6 = await parent.TerminalApi.GetDataString(6);
             var DataString7 = await parent.TerminalApi.GetDataString(7);
             var DataString8 = await parent.TerminalApi.GetDataString(8);
-            var DataString9 = await parent.TerminalApi.GetDataString(9);
 
             requestData.setCheckDataStringInfo({
+                DataString0: DataString0,
                 DataString1: DataString1,
                 DataString2: DataString2,
                 DataString3: DataString3,
@@ -1370,8 +1371,7 @@ async function PreVoidChkEntities() {
                 DataString5: DataString5,
                 DataString6: DataString6,
                 DataString7: DataString7,
-                DataString8: DataString8,
-                DataString9: DataString9
+                DataString8: DataString8
             });
 
             const sanizedRqData = deepStringify(requestData);
@@ -1458,16 +1458,15 @@ async function PostTender() {
             if (!responseData.IsSuccess && !isTest) {
                 await parent.TerminalApi.ShowCustomAlert(jsFunc,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-            } else {
-                await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
 
                 var checkInfo = await GetCheckObjectFromIG();
                 var highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
-                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(56, checkInfo);
+                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(46, highlightedNode); //Void Item
 
                 await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
                     JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
-            }
+            } else {
+                await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }

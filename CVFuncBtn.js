@@ -846,21 +846,21 @@ async function ItemDiscount() {
                         var dcValue = (discount.DCPercent == "0") ? discount.DCAmount : discount.DCPercent;
 
                         //TODO: Apply Item Discount Test 1
-                        var checkInfo = await GetCheckObjectFromIG();
-                        var highlightednode = await GetHighlightedIndexInfo(jsFunc, requestData, checkInfo);
-                        var result2 = await parent.TerminalApi.ApplyItemLevelDiscount(highlightednode);
+                        //var checkInfo = await GetCheckObjectFromIG();
+                        //var highlightednode = await GetHighlightedIndexInfo(jsFunc, requestData, checkInfo);
+                        //var result2 = await parent.TerminalApi.ApplyItemLevelDiscount(highlightednode);
                         //var setkeypad = parent.TerminalApi.SetKeyPadAmount(checkInfo, dcValue);
 
-                        await logToWorker(rqName + CL + "|Add Item Discount|" + discount.DCId + BR +
-                            discount.DCPercent + BR + discount.DCAmount + BR + "SetKeypadAmt:" + //setkeypad + BR +
-                            "Application Status:" + JSON.stringify(result2, null, 2), LogLevel.INFO);
+                        //await logToWorker(rqName + CL + "|Add Item Discount|" + discount.DCId + BR +
+                        //    discount.DCPercent + BR + discount.DCAmount + BR + "SetKeypadAmt:" + //setkeypad + BR +
+                        //    "Application Status:" + JSON.stringify(result2, null, 2), LogLevel.INFO);
 
                         //TODO: Add Item Discount to Check
-                        //var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);
+                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);
 
-                        //await logToWorker(rqName + CL + "|Add Item Discount|" + discount.DCId + BR +
-                        //    discount.DCPercent + BR + discount.DCAmount + BR +
-                        //    "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
+                        await logToWorker(rqName + CL + "|Add Item Discount|" + discount.DCId + BR +
+                            discount.DCPercent + BR + discount.DCAmount + BR +
+                            "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
                 }
             }

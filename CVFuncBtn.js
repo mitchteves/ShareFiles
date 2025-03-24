@@ -382,6 +382,21 @@ async function GetCheckMenuItemInfo(jsFunc, rqData, checkInfo, nodeIndex) {
                     ItmVoidId: menuItemVoidId
                 });
             }
+            else if (nodeType == "Discount") {
+                //|3:number|30:number|Oak Food15%:string|0:number|
+                var itemDCIdx = nodeIndex + i;
+                var itemDCId = (isTest) ? 101 : await parent.TerminalApi.GetNodeId(nodes[nodeIndex + i]);
+                var itemDCDesc = (isTest) ? "itemDCDesc" : await parent.TerminalApi.GetCheckItemDescription(nodes[nodeIndex + i]);
+                //Not Supported
+                var itemDCBaseAmount = 0;
+
+                rqData.addToCheckDiscInfo({
+                    DCIdx: itemDCIdx,
+                    DCId: itemDCId,
+                    DCDesc: itemDCDesc,
+                    DCBsAmt: itemDCBaseAmount
+                });
+            }
         }
 
         const sanizedRqData = deepStringify(rqData.CheckMenuItemInfo);

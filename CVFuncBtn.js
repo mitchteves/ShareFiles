@@ -382,25 +382,26 @@ async function GetCheckMenuItemInfo(jsFunc, rqData, checkInfo, nodeIndex) {
                     ItmVoidId: menuItemVoidId
                 });
 
-                var itemNodes = (isTest) ? "checkNodesCollection" : await parent.TerminalApi.GetNodeCollection(nodes[nodeIndex + i]);
+                var itemNode = (isTest) ? "itemNodeCollection" : await parent.TerminalApi.GetNodeCollection(nodes[nodeIndex + i]);
+                await logToWorker("itemNodes " + jsFunc + CL + itemNode.length, LogLevel.INFO);
 
-                await logToWorker("itemNodes " + jsFunc + NL + itemNodes.length, LogLevel.INFO);
-                
-                //if (nodeType == "Discount") {
-                //    //|3:number|30:number|Oak Food15%:string|0:number|
-                //    var itemDCIdx = nodeIndex + i;
-                //    var itemDCId = (isTest) ? 101 : await parent.TerminalApi.GetNodeId(nodes[nodeIndex + i]);
-                //    var itemDCDesc = (isTest) ? "itemDCDesc" : await parent.TerminalApi.GetCheckItemDescription(nodes[nodeIndex + i]);
-                //    //Not Supported
-                //    var itemDCBaseAmount = 0;
+                var itemNodeType = (isTest) ? "Item" : ((itemNode.length > 0) ? await parent.TerminalApi.GetNodeType(itemNode[0]) : "Item");
 
-                //    rqData.addToCheckDiscInfo({
-                //        DCIdx: itemDCIdx,
-                //        DCId: itemDCId,
-                //        DCDesc: itemDCDesc,
-                //        DCBsAmt: itemDCBaseAmount
-                //    });
-                //}
+                if (itemNodeType == "Discount") {
+                    //|3:number|30:number|Oak Food15%:string|0:number|
+                    var itemDCIdx = 0;
+                    var itemDCId = (isTest) ? 101 : await parent.TerminalApi.GetNodeId(itemNode[0]);
+                    var itemDCDesc = (isTest) ? "itemDCDesc" : await parent.TerminalApi.GetCheckItemDescription(itemNode[0]);
+                    //Not Supported
+                    var itemDCBaseAmount = 0;
+
+                    rqData.addToCheckDiscInfo({
+                        DCIdx: itemDCIdx,
+                        DCId: itemDCId,
+                        DCDesc: itemDCDesc,
+                        DCBsAmt: itemDCBaseAmount
+                    });
+                }
             }
         }
 

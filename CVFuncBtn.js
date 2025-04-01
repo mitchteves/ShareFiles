@@ -9,6 +9,7 @@ const isTest = false;
 (function Register() {
     try {
         if (!isTest) {
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_54", "ClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_370", "MemberInquiry");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_371", "MemberDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_372", "EmployeeDiscount");
@@ -1504,6 +1505,28 @@ async function PostTender() {
 }
 // #endregion
 
+// #region "ClosedCheck", "ClosedCheck"
+async function ClosedCheck() {
+    var jsFunc = "ClosedCheck";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
 
 if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();

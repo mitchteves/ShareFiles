@@ -9,7 +9,9 @@ const isTest = false;
 (function Register() {
     try {
         if (!isTest) {
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_54", "ClosedCheck");
+
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_54", "PreClosedCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_54", "PostClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_370", "MemberInquiry");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_371", "MemberDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_372", "EmployeeDiscount");
@@ -17,6 +19,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_374", "ItemDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_375", "SalesGiftGC");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_376", "PaidGiftGC");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_377", "CCDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_378", "RptCheckByTable");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_379", "RoomDetailSearch");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_480", "CCDiscountNew");
@@ -1005,6 +1008,54 @@ async function RoomDetailSearch() {
 }
 // #endregion
 
+// #region "PreFunctionButton_377", "CCDiscount" - For Testing|Pending Result AppliedDc Update
+async function CCDiscountNew() {
+    var jsFunc = "377";
+    var rqType = "PreFunctionButton_377";
+    var rqName = "CCDiscount";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+                var checkInfo = await GetCheckObjectFromIG();
+                if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+
+                //Set the Check DataString with the Member Dc Information
+                for (var dataString of responseData.DataStrings) {
+                    await SetDataString(dataString.Data, dataString.Idx);
+                };
+
+                //Analyze Response - If Discount Details are provided, apply to the check
+                if (responseData.ApplyDiscount) {
+                    for (var discount of responseData.DiscountDetails) {
+                        //Get the dc value depending if Percent / Amount was set
+                        var dcValue = (discount.DCPercent == "0") ? discount.DCAmount : discount.DCPercent;
+                        //Add Discount to Check
+                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);
+
+                        await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
+                            discount.DCPercent + BR + discount.DCAmount + BR +
+                            "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
+                    };
+                }
+            }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
 // #region "PreFunctionButton_480", "CCDiscountNew" - For Testing|Pending Result AppliedDc Update
 async function CCDiscountNew() {
     var jsFunc = "480";
@@ -1505,9 +1556,32 @@ async function PostTender() {
 }
 // #endregion
 
-// #region "ClosedCheck", "ClosedCheck"
-async function ClosedCheck() {
-    var jsFunc = "ClosedCheck";
+// #region "PreClosedCheck", "PreClosedCheck"
+async function PreClosedCheck() {
+    var jsFunc = "PreClosedCheck";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PostClosedCheck", "PostClosedCheck"
+async function PostClosedCheck() {
+    var jsFunc = "PostClosedCheck";
     var requestData = new RequestDataStructure();
 
     try {

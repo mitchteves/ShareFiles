@@ -12,6 +12,8 @@ const isTest = false;
 
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_54", "PreClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_54", "PostClosedCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_160", "PreReOpenClosedCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_160", "PostReOpenClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_370", "MemberInquiry");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_371", "MemberDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_372", "EmployeeDiscount");
@@ -1009,7 +1011,7 @@ async function RoomDetailSearch() {
 // #endregion
 
 // #region "PreFunctionButton_377", "CCDiscount" - For Testing|Pending Result AppliedDc Update
-async function CCDiscountNew() {
+async function CCDiscount() {
     var jsFunc = "377";
     var rqType = "PreFunctionButton_377";
     var rqName = "CCDiscount";
@@ -1582,6 +1584,52 @@ async function PreClosedCheck() {
 // #region "PostClosedCheck", "PostClosedCheck"
 async function PostClosedCheck() {
     var jsFunc = "PostClosedCheck";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PreReOpenClosedCheck", "PreReOpenClosedCheck"
+async function PreReOpenClosedCheck() {
+    var jsFunc = "PreReOpenClosedCheck";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PostReOpenClosedCheck", "PostReOpenClosedCheck"
+async function PostReOpenClosedCheck() {
+    var jsFunc = "PostReOpenClosedCheck";
     var requestData = new RequestDataStructure();
 
     try {

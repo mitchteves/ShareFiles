@@ -1423,6 +1423,14 @@ async function PreVoidCheck() {
             if (!responseData.IsSuccess && !isTest) {
                 await parent.TerminalApi.ShowCustomAlert(jsFunc,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+
+                if (responseData.RunTermFunc) {
+                    var checkInfo = await GetCheckObjectFromIG();
+                    var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
+
+                    await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
+                        JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+                }
             } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
@@ -1491,6 +1499,14 @@ async function PreCancelCheck() {
             if (!responseData.IsSuccess && !isTest) {
                 await parent.TerminalApi.ShowCustomAlert(jsFunc,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+
+                if (responseData.RunTermFunc) {
+                    var checkInfo = await GetCheckObjectFromIG();
+                    var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
+
+                    await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
+                        JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+                }
             } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }

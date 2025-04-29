@@ -1563,7 +1563,7 @@ async function PostTender() {
 
                 var checkInfo = await GetCheckObjectFromIG();
                 var highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
-                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(46, null, highlightedNode); //Void Item
+                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
 
                 await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
                     JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);

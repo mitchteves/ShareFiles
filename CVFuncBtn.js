@@ -1702,8 +1702,8 @@ async function PrepareCheckReceipt() {
         await parent.TerminalApi.ReceiptAppendText("****** Your Order Number is ******");
 
         var receipt = await parent.TerminalApi.GetReceiptText();
+        await event.invokeMethodAsync('SetParam', 'Receipt', receipt);
         await logToWorker(jsFunc + CL + "receipt-" + receipt, LogLevel.INFO);
-        await parent.TerminalApi.ReceiptAppendText("****** Your Order Number is ******");
 
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }

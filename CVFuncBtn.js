@@ -39,7 +39,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostTender", "PostTender");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceipt", "PrepareCheckReceipt");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareGuestInfoReceipt", "PrepareGuestInfoReceipt");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceiptV2", "PrepareCheckReceipt");
         }
     }
     catch (error) { console.log("Register catch: " + error); }
@@ -1687,29 +1687,24 @@ async function PrepareCheckReceipt() {
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
             } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
-    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
-}
-// #endregion
 
-// #region "PrepareGuestInfoReceipt", "PrepareGuestInfoReceipt"
-async function PrepareGuestInfoReceipt() {
-    var jsFunc = "PrepareGuestInfoReceipt";
-    var requestData = new RequestDataStructure();
+        await logToWorker(jsFunc + CL + "PrepareCheckReceipt", LogLevel.INFO);
+        await parent.TerminalApi.ReceiptInit();
+        await parent.TerminalApi.ReceiptOrderHeader();
+        await parent.TerminalApi.ReceiptAppendText("****** Your Order Number is ******");
+        await parent.TerminalApi.ReceiptMenuItems();
+        await parent.TerminalApi.ReceiptAppendText("****** Your Order Number is ******");
+        await parent.TerminalApi.ReceiptSubTotal();
+        await parent.TerminalApi.ReceiptAppendText("****** Your Order Number is ******");
+        await parent.TerminalApi.ReceiptTenders();
+        await parent.TerminalApi.ReceiptAppendText("****** Your Order Number is ******");
+        await parent.TerminalApi.ReceiptFooter();
+        await parent.TerminalApi.ReceiptAppendText("****** Your Order Number is ******");
 
-    try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+        var receipt = await parent.TerminalApi.GetReceiptText();
+        await logToWorker(jsFunc + CL + "receipt-" + receipt, LogLevel.INFO);
+        await parent.TerminalApi.ReceiptAppendText("****** Your Order Number is ******");
 
-        if (isProceed) {
-            const sanizedRqData = deepStringify(requestData);
-            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
-            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
-            var responseData = await processRequest(sanizedRqData);
-
-            if (!responseData.IsSuccess && !isTest) {
-                await parent.TerminalApi.ShowCustomAlert(jsFunc,
-                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
-        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
 // #endregion

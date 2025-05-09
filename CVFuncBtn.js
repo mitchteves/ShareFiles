@@ -26,6 +26,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_379", "RoomDetailSearch");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_480", "CCDiscountNew");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_481", "CCLookupDc");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_482", "EarningsGSPPointManual");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_486", "PrintCardSlip");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_487", "LastCardSlip");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_488", "ManualCard");
@@ -1177,6 +1178,85 @@ async function CCLookupDc() {
                             await parent.TerminalApi.ShowCustomAlert("CCLookupDc2",
                                 JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
                         } else { await logToWorker("CCLookupDc2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
+                    }
+                }
+            }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PreFunctionButton_482", "EarningsGSPPointManual" - For Testing|Pending Result AppliedDc Update
+async function EarningsGSPPointManual() {
+    var jsFunc = "482";
+    var rqType = "PreFunctionButton_482";
+    var rqName = "EarningsGSPPointManual";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
+
+        if (isProceed) {
+            //Add Code to ask for additional information
+            var getInput = (isTest) ? "0" : await parent.TerminalApi.GetKeyPadAmount();
+
+            requestData.setAdditionalInfo({
+                UsrInput: getInput //KeyPad Amount
+            });
+
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+                var checkInfo = await GetCheckObjectFromIG();
+                if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+
+                //Set the Check DataString with the Member Dc Information
+                for (var dataString of responseData.DataStrings) {
+                    await SetDataString(dataString.Data, dataString.Idx);
+                };
+
+                //Analyze Response
+                //If Discount Details are provided, apply to the check
+                if (responseData.ApplyDiscount) {
+                    for (var discount of responseData.DiscountDetails) {
+                        //Get the dc value depending if Percent / Amount was set
+                        var dcValue = (discount.DCPercent == "0") ? discount.DCAmount : discount.DCPercent;
+                        //Add Discount to Check
+                        var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);
+
+                        await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
+                            discount.DCPercent + BR + discount.DCAmount + BR +
+                            "Application Status:" + result + BR, LogLevel.INFO);
+                    };
+
+                    //Get Latest Check information after applying the discount if any
+                    var requestData2 = new RequestDataStructure();
+                    isProceed = await GetAllInfo(jsFunc, rqType, "EarningsGSPPointManual2", requestData2, false, false);
+
+                    if (isProceed) {
+                        //Add Code to ask for additional information
+                        var getInput = (isTest) ? "0" : await parent.TerminalApi.GetKeyPadAmount();
+
+                        requestData2.setAdditionalInfo({
+                            UsrInput: getInput //KeyPad Amount
+                        });
+
+                        const sanizedRqData2 = deepStringify(requestData2);
+                        const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
+                        await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
+                        var responseData2 = await processRequest(sanizedRqData2);
+
+                        if (!responseData2.IsSuccess && !isTest) {
+                            await parent.TerminalApi.ShowCustomAlert("EarningsGSPPointManual2",
+                                JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
+                        } else { await logToWorker("EarningsGSPPointManual2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
                     }
                 }
             }

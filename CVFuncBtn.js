@@ -1516,7 +1516,7 @@ async function PreCancelCheck() {
 // #endregion
 
 // #region "PreTender", "PreTender"
-async function PreTender() {
+async function PreTender(event) {
     var jsFunc = "PreTender";
     var requestData = new RequestDataStructure();
 
@@ -1526,9 +1526,11 @@ async function PreTender() {
         if (isProceed) {
             //Add Code to ask for additional information
             var getInput = (isTest) ? "0" : await parent.TerminalApi.GetKeyPadAmount();
+            var getId = (isTest) ? "0" : await event.invokeMethodAsync('GetParam', 'Id');
 
             requestData.setAdditionalInfo({
-                UsrInput: getInput //KeyPad Amount
+                UsrInput: getInput, //KeyPad Amount
+                TenderId: getId //Id Of the Tender Clicked
             });
 
             const sanizedRqData = deepStringify(requestData);

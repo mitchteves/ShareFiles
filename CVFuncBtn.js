@@ -1669,7 +1669,7 @@ async function PostReOpenClosedCheck() {
 // #endregion
 
 // #region "PrepareCheckReceipt", "PrepareCheckReceipt"
-async function PrepareCheckReceipt() {
+async function PrepareCheckReceipt(event) {
     var jsFunc = "PrepareCheckReceipt";
     var requestData = new RequestDataStructure();
 
@@ -1688,6 +1688,7 @@ async function PrepareCheckReceipt() {
             } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
 
+        await parent.window.Receipt.GetReceiptText(event);
         await logToWorker(jsFunc + CL + "PrepareCheckReceipt", LogLevel.INFO);
         await parent.TerminalApi.ReceiptInit();
         await parent.TerminalApi.ReceiptOrderHeader();

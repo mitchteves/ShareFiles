@@ -1728,6 +1728,28 @@ async function PrepareCheckReceipt(event) {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
+            var DataString0 = await parent.TerminalApi.GetDataString(0);
+            var DataString1 = await parent.TerminalApi.GetDataString(1);
+            var DataString2 = await parent.TerminalApi.GetDataString(2);
+            var DataString3 = await parent.TerminalApi.GetDataString(3);
+            var DataString4 = await parent.TerminalApi.GetDataString(4);
+            var DataString5 = await parent.TerminalApi.GetDataString(5);
+            var DataString6 = await parent.TerminalApi.GetDataString(6);
+            var DataString7 = await parent.TerminalApi.GetDataString(7);
+            var DataString8 = await parent.TerminalApi.GetDataString(8);
+
+            requestData.setCheckDataStringInfo({
+                DataString0: DataString0,
+                DataString1: DataString1,
+                DataString2: DataString2,
+                DataString3: DataString3,
+                DataString4: DataString4,
+                DataString5: DataString5,
+                DataString6: DataString6,
+                DataString7: DataString7,
+                DataString8: DataString8
+            });
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);

@@ -1542,7 +1542,7 @@ async function PreTender(event) {
                 await parent.TerminalApi.ShowCustomAlert(jsFunc,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
             } else {
-                await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO);
+                await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
                 var checkInfo = await GetCheckObjectFromIG();
                 if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
 
@@ -1560,7 +1560,7 @@ async function PreTender(event) {
                         //Add Discount to Check
                         var result = await parent.TerminalApi.ApplyDiscountById(discount.DCId, dcValue, null);
 
-                        await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
+                        await logToWorker(jsFunc + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +
                             "Application Status:" + result + BR, LogLevel.INFO);
                     };
@@ -1753,6 +1753,19 @@ async function PrepareCheckReceipt(event) {
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+
+            var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+            const sanizedChkData = deepStringify(posCheckData.check);
+            const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+
+            parent.window.posCheck = JSON.parse(posCheckData.check);
+
+            if (parent.window.posCheck.IsRefund == false) {
+                //await event.invokeMethodAsync('SetParam', 'Receipt', receipt);
+                await logToWorker(jsFunc + CL + "CLOSED CHECK", LogLevel.INFO);
+            }
+
             var responseData = await processRequest(sanizedRqData);
 
             await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);

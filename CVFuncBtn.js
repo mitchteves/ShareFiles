@@ -94,6 +94,7 @@ class RequestDataStructure {
         this.CheckMenuItemInfo = [];
         this.CheckDiscInfo = [];
         this.CheckTenderInfo = [];
+        this.PosCheckData = {};
     }
     setRequestInfo(data) {
         this.RequestInfo = data;
@@ -124,6 +125,9 @@ class RequestDataStructure {
     }
     addToCheckTenderInfo(payItem) {
         this.CheckTenderInfo.push(payItem);
+    }
+    setPosCheckData(data) {
+        this.PosCheckData = data;
     }
 }
 // #endregion
@@ -1758,6 +1762,7 @@ async function PrepareCheckReceipt(event) {
             parent.window.posCheck = JSON.parse(posCheckData.check);
 
             const sanizedChkData = deepStringify(parent.window.posCheck);
+            requestData.setPosCheckData(sanizedChkData);
             const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
             await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
 

@@ -1755,11 +1755,11 @@ async function PrepareCheckReceipt(event) {
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
 
             var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
-            const sanizedChkData = deepStringify(posCheckData.check);
+            parent.window.posCheck = JSON.parse(posCheckData.check);
+
+            const sanizedChkData = deepStringify(parent.window.posCheck);
             const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
             await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
-
-            parent.window.posCheck = JSON.parse(posCheckData.check);
 
             if (parent.window.posCheck.IsRefund == false) {
                 //await event.invokeMethodAsync('SetParam', 'Receipt', receipt);

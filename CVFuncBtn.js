@@ -10,6 +10,7 @@ const isTest = false;
     try {
         if (!isTest) {
 
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_46", "PreVoidChkEntities");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_54", "PreClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_54", "PostClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_160", "PreReOpenClosedCheck");
@@ -1762,7 +1763,7 @@ async function PrepareCheckReceipt(event) {
             parent.window.posCheck = JSON.parse(posCheckData.check);
 
             const sanizedChkData = deepStringify(parent.window.posCheck);
-            requestData.setPosCheckData(sanizedChkData);
+            requestData.setPosCheckData(JSON.stringify(sanizedChkData, null, 2));
             const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
             await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
 

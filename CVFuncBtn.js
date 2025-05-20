@@ -10,7 +10,7 @@ const isTest = false;
     try {
         if (!isTest) {
 
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_46", "PreVoidChkEntities");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_46", "PreVoidItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_54", "PreClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_54", "PostClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_160", "PreReOpenClosedCheck");
@@ -35,7 +35,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidChkEntities");
+            //parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreCancelCheck", "PreCancelCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostTender", "PostTender");
@@ -1444,13 +1444,15 @@ async function PreVoidCheck() {
 }
 // #endregion
 
-// #region "PreVoidChkEntities", "PreVoidChkEntities"
-async function PreVoidChkEntities() {
-    var jsFunc = "PreVoidChkEntities";
+// #region "PreVoidChkEntities" (), "PreFunctionButton_46" (Item,Discount, Tender) => Both call this function
+async function PreVoidItem() {
+    var jsFunc = "46";
+    var rqType = "PreFunctionButton_46";
+    var rqName = "PreVoidItem";
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, true, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, true);
 
         if (isProceed) {
             var DataString0 = await parent.TerminalApi.GetDataString(0);
@@ -1477,15 +1479,15 @@ async function PreVoidChkEntities() {
 
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
-            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            await logToWorker(rqType + BR + logJsonInfo, LogLevel.DEBUG);
             var responseData = await processRequest(sanizedRqData);
 
             if (!responseData.IsSuccess && !isTest) {
-                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                await parent.TerminalApi.ShowCustomAlert(rqType,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
-        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
-    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+            } else { await logToWorker(rqType + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqType + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqType + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 
@@ -1764,7 +1766,7 @@ async function PrepareCheckReceipt(event) {
 
             const sanizedChkData = deepStringify(parent.window.posCheck);
             const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
-            requestData.setPosCheckData(logJsonCheckInfo);
+            requestData.setPosCheckData({ logJsonCheckInfo });
             await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
 
             if (parent.window.posCheck.IsRefund == false) {

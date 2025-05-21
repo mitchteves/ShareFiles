@@ -1757,10 +1757,6 @@ async function PrepareCheckReceipt(event) {
                 DataString8: DataString8
             });
 
-            const sanizedRqData = deepStringify(requestData);
-            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
-            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
-
             var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
             parent.window.posCheck = JSON.parse(posCheckData.check);
 
@@ -1774,6 +1770,10 @@ async function PrepareCheckReceipt(event) {
                 //await event.invokeMethodAsync('SetParam', 'Receipt', receipt);
                 await logToWorker(jsFunc + CL + "CLOSED CHECK", LogLevel.INFO);
             }
+
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
 
             var responseData = await processRequest(sanizedRqData);
 

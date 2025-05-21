@@ -1767,6 +1767,7 @@ async function PrepareCheckReceipt(event) {
             const sanizedChkData = deepStringify(parent.window.posCheck);
             const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
             requestData.setPosCheckData(sanizedChkData);
+            await logToWorker(jsFunc + BR + "PosCheckData" + BR + JSON.stringify(requestData.PosCheckData, null, 2), LogLevel.DEBUG);
             await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
 
             if (parent.window.posCheck.IsRefund == false) {

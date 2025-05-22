@@ -1621,14 +1621,27 @@ async function PostTender() {
                 await parent.TerminalApi.ShowCustomAlert(jsFunc,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
 
-                var checkInfo = await GetCheckObjectFromIG();
-                var highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
-                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
+                if (responseData.RunTermFunc) {
+                    var checkInfo = await GetCheckObjectFromIG();
+                    var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
 
-                await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
-                    JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+                    await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
+                        JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+                }
             } else {
-                await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+                await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
+
+                if (responseData.SetTenderXtraData) {
+                    var checkInfo = await GetCheckObjectFromIG();
+                    var highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
+
+                    await parent.TerminalApi.PreSetTenderExtraData(responseData.TenderExtraData);
+
+                    var tenderXtrData = (isTest) ? "tenderXtrData" : await parent.TerminalApi.GetTenderExtraData(highlightedNode);
+
+                    await logToWorker(jsFunc + CL + "tenderXtrData:" + tenderXtrData, LogLevel.INFO);
+                }
+            }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
@@ -1763,13 +1776,7 @@ async function PrepareCheckReceipt(event) {
             const sanizedChkData = deepStringify(parent.window.posCheck);
             const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
             requestData.setPosCheckData(sanizedChkData);
-            await logToWorker(jsFunc + BR + "PosCheckData" + BR + JSON.stringify(requestData.PosCheckData, null, 2), LogLevel.DEBUG);
             await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
-
-            if (parent.window.posCheck.IsRefund == false) {
-                //await event.invokeMethodAsync('SetParam', 'Receipt', receipt);
-                await logToWorker(jsFunc + CL + "CLOSED CHECK", LogLevel.INFO);
-            }
 
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);

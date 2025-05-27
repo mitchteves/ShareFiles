@@ -1809,7 +1809,12 @@ async function PrepareCheckReceipt(event) {
                 for (var customText of responseData.CR_AfterTenders) {
                     await parent.TerminalApi.ReceiptAppendText(customText);}}
 
-            await parent.TerminalApi.ReceiptFooter();
+            if (responseData.ReplaceFooter) {
+                for (var customText of responseData.CR_NewFooter) {
+                    await parent.TerminalApi.ReceiptAppendText(customText);
+                }}
+            else { await parent.TerminalApi.ReceiptFooter(); }
+
             if (responseData.AddCustomReceipt) {
                 for (var customText of responseData.CR_AfterFooter) {
                     await parent.TerminalApi.ReceiptAppendText(customText);}}

@@ -248,6 +248,8 @@ async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
         var cashierId = (isTest) ? "999" : await parent.TerminalApi.GetCheckCashierId(checkInfo);
         var checkTable = (isTest) ? "checkTable" : await parent.TerminalApi.GetCheckTableName(checkInfo);
         var checkNumber = (isTest) ? "1111111" : await parent.TerminalApi.GetcheckNumber(checkInfo);
+        //2025.05.28 Added API
+        var assocCheckNumber = (isTest) ? "1111111" : await parent.TerminalApi.GetAssociatedCheckNumber(checkInfo);
         var checkType = (isTest) ? "01" : await parent.TerminalApi.GetCheckTypeId(checkInfo);
         var isCheckOpen = (isTest) ? true : await parent.TerminalApi.IsCheckOpen(checkInfo);
         var isCheckRefund = (isTest) ? false : await parent.TerminalApi.IsCheckRefunded(checkInfo);
@@ -286,6 +288,7 @@ async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
             CashierId: cashierId,
             ChkTbl: checkTable,
             ChkNo: checkNumber,
+            AssChkNo: assocCheckNumber,
             ChkType: checkType,
             ChkOpn: isCheckOpen,
             ChkRfnd: isCheckRefund,

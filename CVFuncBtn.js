@@ -32,6 +32,8 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_488", "ManualCard");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_489", "ReopenErrCard");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_491", "ParnasRewardMembership");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_492", "MemberDiscount");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_493", "EmployeeDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");

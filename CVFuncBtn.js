@@ -764,7 +764,7 @@ async function MemberDiscount() {
                             var DataString7 = await parent.TerminalApi.GetDataString(7);
                             var DataString8 = await parent.TerminalApi.GetDataString(8);
 
-                            requestData.setCheckDataStringInfo({
+                            requestData2.setCheckDataStringInfo({
                                 DataString0: DataString0,
                                 DataString1: DataString1,
                                 DataString2: DataString2,
@@ -774,6 +774,10 @@ async function MemberDiscount() {
                                 DataString6: DataString6,
                                 DataString7: DataString7,
                                 DataString8: DataString8
+                            });
+
+                            requestData2.setAdditionalInfo({
+                                MsgType: responseData.MsgType //Pass Thru from previous response
                             });
 
                             const sanizedRqData2 = deepStringify(requestData2);

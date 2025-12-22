@@ -780,7 +780,10 @@ async function MemberDiscount() {
                         //Pass Thru from previous response
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
-                            sMsg04: responseData.sMsg04
+                            sMsg04: responseData.sMsg04,
+                            ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
+                            ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
+                            ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC
                         });
 
                         const sanizedRqData2 = deepStringify(requestData2);
@@ -877,7 +880,10 @@ async function EmployeeDiscount() {
                         //Pass Thru from previous response
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
-                            sMsg04: responseData.sMsg04
+                            sMsg04: responseData.sMsg04,
+                            ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
+                            ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
+                            ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC
                         });
 
                         const sanizedRqData2 = deepStringify(requestData2);
@@ -971,7 +977,10 @@ async function CheckDiscount() {
                         //Pass Thru from previous response
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
-                            sMsg04: responseData.sMsg04
+                            sMsg04: responseData.sMsg04,
+                            ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
+                            ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
+                            ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC
                         });
 
                         const sanizedRqData2 = deepStringify(requestData2);
@@ -1237,7 +1246,10 @@ async function CCDiscount() {
                         //Pass Thru from previous response
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
-                            sMsg04: responseData.sMsg04
+                            sMsg04: responseData.sMsg04,
+                            ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
+                            ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
+                            ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC
                         });
 
                         const sanizedRqData2 = deepStringify(requestData2);
@@ -1332,7 +1344,10 @@ async function CCDiscountNew() {
                         //Pass Thru from previous response
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
-                            sMsg04: responseData.sMsg04
+                            sMsg04: responseData.sMsg04,
+                            ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
+                            ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
+                            ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC
                         });
 
                         const sanizedRqData2 = deepStringify(requestData2);
@@ -1622,7 +1637,10 @@ async function ParnasRewardMembership() {
                         //Pass Thru from previous response
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
-                            sMsg04: responseData.sMsg04
+                            sMsg04: responseData.sMsg04,
+                            ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
+                            ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
+                            ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC
                         });
 
                         const sanizedRqData2 = deepStringify(requestData2);

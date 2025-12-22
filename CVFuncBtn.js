@@ -746,52 +746,54 @@ async function MemberDiscount() {
                         await logToWorker(rqName + CL + "|Add Discount|" + discount.DCId + BR +
                             discount.DCPercent + BR + discount.DCAmount + BR +
                             "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
-
-                        // #region 20251216 Added code, Result Text File required now to call VoucherPayment.exe
-                        //Get Latest Check information after applying the discount if any
-                        var requestData2 = new RequestDataStructure();
-                        isProceed = await GetAllInfo(jsFunc, rqType, "MemberDiscount2", requestData2, false, false);
-
-                        if (isProceed) {
-                            //Need the set DataString Value for the Result Text Request File
-                            var DataString0 = await parent.TerminalApi.GetDataString(0);
-                            var DataString1 = await parent.TerminalApi.GetDataString(1);
-                            var DataString2 = await parent.TerminalApi.GetDataString(2);
-                            var DataString3 = await parent.TerminalApi.GetDataString(3);
-                            var DataString4 = await parent.TerminalApi.GetDataString(4);
-                            var DataString5 = await parent.TerminalApi.GetDataString(5);
-                            var DataString6 = await parent.TerminalApi.GetDataString(6);
-                            var DataString7 = await parent.TerminalApi.GetDataString(7);
-                            var DataString8 = await parent.TerminalApi.GetDataString(8);
-
-                            requestData2.setCheckDataStringInfo({
-                                DataString0: DataString0,
-                                DataString1: DataString1,
-                                DataString2: DataString2,
-                                DataString3: DataString3,
-                                DataString4: DataString4,
-                                DataString5: DataString5,
-                                DataString6: DataString6,
-                                DataString7: DataString7,
-                                DataString8: DataString8
-                            });
-
-                            requestData2.setAdditionalInfo({
-                                MsgType: responseData.MsgType //Pass Thru from previous response
-                            });
-
-                            const sanizedRqData2 = deepStringify(requestData2);
-                            const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
-                            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
-                            var responseData2 = await processRequest(sanizedRqData2);
-
-                            if (!responseData2.IsSuccess && !isTest) {
-                                await parent.TerminalApi.ShowCustomAlert("MemberDiscount2",
-                                    JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
-                            } else { await logToWorker("MemberDiscount2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
-                        }
-                        // #endregion
                     };
+
+                    // #region 20251216 Added code, Result Text File required now to call VoucherPayment.exe
+                    //Get Latest Check information after applying the discount if any
+                    var requestData2 = new RequestDataStructure();
+                    isProceed = await GetAllInfo(jsFunc, rqType, "MemberDiscount2", requestData2, false, false);
+
+                    if (isProceed) {
+                        //Need the set DataString Value for the Result Text Request File
+                        var DataString0 = await parent.TerminalApi.GetDataString(0);
+                        var DataString1 = await parent.TerminalApi.GetDataString(1);
+                        var DataString2 = await parent.TerminalApi.GetDataString(2);
+                        var DataString3 = await parent.TerminalApi.GetDataString(3);
+                        var DataString4 = await parent.TerminalApi.GetDataString(4);
+                        var DataString5 = await parent.TerminalApi.GetDataString(5);
+                        var DataString6 = await parent.TerminalApi.GetDataString(6);
+                        var DataString7 = await parent.TerminalApi.GetDataString(7);
+                        var DataString8 = await parent.TerminalApi.GetDataString(8);
+
+                        requestData2.setCheckDataStringInfo({
+                            DataString0: DataString0,
+                            DataString1: DataString1,
+                            DataString2: DataString2,
+                            DataString3: DataString3,
+                            DataString4: DataString4,
+                            DataString5: DataString5,
+                            DataString6: DataString6,
+                            DataString7: DataString7,
+                            DataString8: DataString8
+                        });
+
+                        //Pass Thru from previous response
+                        requestData2.setAdditionalInfo({
+                            MsgType: responseData.MsgType,
+                            sMsg04: responseData.sMsg04
+                        });
+
+                        const sanizedRqData2 = deepStringify(requestData2);
+                        const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
+                        await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
+                        var responseData2 = await processRequest(sanizedRqData2);
+
+                        if (!responseData2.IsSuccess && !isTest) {
+                            await parent.TerminalApi.ShowCustomAlert("MemberDiscount2",
+                                JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
+                        } else { await logToWorker("MemberDiscount2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
+                    }
+                    // #endregion
                 }
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
@@ -842,6 +844,53 @@ async function EmployeeDiscount() {
                             discount.DCPercent + BR + discount.DCAmount + BR +
                             "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
+
+                    // #region 20251217 Added code, Result Text File required
+                    //Get Latest Check information after applying the discount if any
+                    var requestData2 = new RequestDataStructure();
+                    isProceed = await GetAllInfo(jsFunc, rqType, "EmployeeDiscount2", requestData2, false, false);
+
+                    if (isProceed) {
+                        //Need the set DataString Value for the Result Text Request File
+                        var DataString0 = await parent.TerminalApi.GetDataString(0);
+                        var DataString1 = await parent.TerminalApi.GetDataString(1);
+                        var DataString2 = await parent.TerminalApi.GetDataString(2);
+                        var DataString3 = await parent.TerminalApi.GetDataString(3);
+                        var DataString4 = await parent.TerminalApi.GetDataString(4);
+                        var DataString5 = await parent.TerminalApi.GetDataString(5);
+                        var DataString6 = await parent.TerminalApi.GetDataString(6);
+                        var DataString7 = await parent.TerminalApi.GetDataString(7);
+                        var DataString8 = await parent.TerminalApi.GetDataString(8);
+
+                        requestData2.setCheckDataStringInfo({
+                            DataString0: DataString0,
+                            DataString1: DataString1,
+                            DataString2: DataString2,
+                            DataString3: DataString3,
+                            DataString4: DataString4,
+                            DataString5: DataString5,
+                            DataString6: DataString6,
+                            DataString7: DataString7,
+                            DataString8: DataString8
+                        });
+
+                        //Pass Thru from previous response
+                        requestData2.setAdditionalInfo({
+                            MsgType: responseData.MsgType,
+                            sMsg04: responseData.sMsg04
+                        });
+
+                        const sanizedRqData2 = deepStringify(requestData2);
+                        const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
+                        await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
+                        var responseData2 = await processRequest(sanizedRqData2);
+
+                        if (!responseData2.IsSuccess && !isTest) {
+                            await parent.TerminalApi.ShowCustomAlert("EmployeeDiscount2",
+                                JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
+                        } else { await logToWorker("EmployeeDiscount2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
+                    }
+                    // #endregion
                 }
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
@@ -889,6 +938,53 @@ async function CheckDiscount() {
                             discount.DCPercent + BR + discount.DCAmount + BR +
                             "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
+
+                    // #region 20251217 Added code, Result Text File required
+                    //Get Latest Check information after applying the discount if any
+                    var requestData2 = new RequestDataStructure();
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CheckDiscount2", requestData2, false, false);
+
+                    if (isProceed) {
+                        //Need the set DataString Value for the Result Text Request File
+                        var DataString0 = await parent.TerminalApi.GetDataString(0);
+                        var DataString1 = await parent.TerminalApi.GetDataString(1);
+                        var DataString2 = await parent.TerminalApi.GetDataString(2);
+                        var DataString3 = await parent.TerminalApi.GetDataString(3);
+                        var DataString4 = await parent.TerminalApi.GetDataString(4);
+                        var DataString5 = await parent.TerminalApi.GetDataString(5);
+                        var DataString6 = await parent.TerminalApi.GetDataString(6);
+                        var DataString7 = await parent.TerminalApi.GetDataString(7);
+                        var DataString8 = await parent.TerminalApi.GetDataString(8);
+
+                        requestData2.setCheckDataStringInfo({
+                            DataString0: DataString0,
+                            DataString1: DataString1,
+                            DataString2: DataString2,
+                            DataString3: DataString3,
+                            DataString4: DataString4,
+                            DataString5: DataString5,
+                            DataString6: DataString6,
+                            DataString7: DataString7,
+                            DataString8: DataString8
+                        });
+
+                        //Pass Thru from previous response
+                        requestData2.setAdditionalInfo({
+                            MsgType: responseData.MsgType,
+                            sMsg04: responseData.sMsg04
+                        });
+
+                        const sanizedRqData2 = deepStringify(requestData2);
+                        const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
+                        await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
+                        var responseData2 = await processRequest(sanizedRqData2);
+
+                        if (!responseData2.IsSuccess && !isTest) {
+                            await parent.TerminalApi.ShowCustomAlert("CheckDiscount2",
+                                JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
+                        } else { await logToWorker("CheckDiscount2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
+                    }
+                    // #endregion
                 }
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
@@ -1108,6 +1204,53 @@ async function CCDiscount() {
                             discount.DCPercent + BR + discount.DCAmount + BR +
                             "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
+
+                    // #region 20251217 Added code, Result Text File required
+                    //Get Latest Check information after applying the discount if any
+                    var requestData2 = new RequestDataStructure();
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CCDiscount2", requestData2, false, false);
+
+                    if (isProceed) {
+                        //Need the set DataString Value for the Result Text Request File
+                        var DataString0 = await parent.TerminalApi.GetDataString(0);
+                        var DataString1 = await parent.TerminalApi.GetDataString(1);
+                        var DataString2 = await parent.TerminalApi.GetDataString(2);
+                        var DataString3 = await parent.TerminalApi.GetDataString(3);
+                        var DataString4 = await parent.TerminalApi.GetDataString(4);
+                        var DataString5 = await parent.TerminalApi.GetDataString(5);
+                        var DataString6 = await parent.TerminalApi.GetDataString(6);
+                        var DataString7 = await parent.TerminalApi.GetDataString(7);
+                        var DataString8 = await parent.TerminalApi.GetDataString(8);
+
+                        requestData2.setCheckDataStringInfo({
+                            DataString0: DataString0,
+                            DataString1: DataString1,
+                            DataString2: DataString2,
+                            DataString3: DataString3,
+                            DataString4: DataString4,
+                            DataString5: DataString5,
+                            DataString6: DataString6,
+                            DataString7: DataString7,
+                            DataString8: DataString8
+                        });
+
+                        //Pass Thru from previous response
+                        requestData2.setAdditionalInfo({
+                            MsgType: responseData.MsgType,
+                            sMsg04: responseData.sMsg04
+                        });
+
+                        const sanizedRqData2 = deepStringify(requestData2);
+                        const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
+                        await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
+                        var responseData2 = await processRequest(sanizedRqData2);
+
+                        if (!responseData2.IsSuccess && !isTest) {
+                            await parent.TerminalApi.ShowCustomAlert("CCDiscount2",
+                                JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
+                        } else { await logToWorker("CCDiscount2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
+                    }
+                    // #endregion
                 }
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
@@ -1156,6 +1299,53 @@ async function CCDiscountNew() {
                             discount.DCPercent + BR + discount.DCAmount + BR +
                             "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
+
+                    // #region 20251217 Added code, Result Text File required
+                    //Get Latest Check information after applying the discount if any
+                    var requestData2 = new RequestDataStructure();
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CCDiscountNew2", requestData2, false, false);
+
+                    if (isProceed) {
+                        //Need the set DataString Value for the Result Text Request File
+                        var DataString0 = await parent.TerminalApi.GetDataString(0);
+                        var DataString1 = await parent.TerminalApi.GetDataString(1);
+                        var DataString2 = await parent.TerminalApi.GetDataString(2);
+                        var DataString3 = await parent.TerminalApi.GetDataString(3);
+                        var DataString4 = await parent.TerminalApi.GetDataString(4);
+                        var DataString5 = await parent.TerminalApi.GetDataString(5);
+                        var DataString6 = await parent.TerminalApi.GetDataString(6);
+                        var DataString7 = await parent.TerminalApi.GetDataString(7);
+                        var DataString8 = await parent.TerminalApi.GetDataString(8);
+
+                        requestData2.setCheckDataStringInfo({
+                            DataString0: DataString0,
+                            DataString1: DataString1,
+                            DataString2: DataString2,
+                            DataString3: DataString3,
+                            DataString4: DataString4,
+                            DataString5: DataString5,
+                            DataString6: DataString6,
+                            DataString7: DataString7,
+                            DataString8: DataString8
+                        });
+
+                        //Pass Thru from previous response
+                        requestData2.setAdditionalInfo({
+                            MsgType: responseData.MsgType,
+                            sMsg04: responseData.sMsg04
+                        });
+
+                        const sanizedRqData2 = deepStringify(requestData2);
+                        const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
+                        await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
+                        var responseData2 = await processRequest(sanizedRqData2);
+
+                        if (!responseData2.IsSuccess && !isTest) {
+                            await parent.TerminalApi.ShowCustomAlert("CCDiscountNew2",
+                                JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
+                        } else { await logToWorker("CCDiscountNew2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
+                    }
+                    // #endregion
                 }
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
@@ -1398,6 +1588,54 @@ async function ParnasRewardMembership() {
                             discount.DCPercent + BR + discount.DCAmount + BR +
                             "Application Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
+
+
+                    // #region 20251217 Added code, Result Text File required
+                    //Get Latest Check information after applying the discount if any
+                    var requestData2 = new RequestDataStructure();
+                    isProceed = await GetAllInfo(jsFunc, rqType, "ParnasRewardMembership2", requestData2, false, false);
+
+                    if (isProceed) {
+                        //Need the set DataString Value for the Result Text Request File
+                        var DataString0 = await parent.TerminalApi.GetDataString(0);
+                        var DataString1 = await parent.TerminalApi.GetDataString(1);
+                        var DataString2 = await parent.TerminalApi.GetDataString(2);
+                        var DataString3 = await parent.TerminalApi.GetDataString(3);
+                        var DataString4 = await parent.TerminalApi.GetDataString(4);
+                        var DataString5 = await parent.TerminalApi.GetDataString(5);
+                        var DataString6 = await parent.TerminalApi.GetDataString(6);
+                        var DataString7 = await parent.TerminalApi.GetDataString(7);
+                        var DataString8 = await parent.TerminalApi.GetDataString(8);
+
+                        requestData2.setCheckDataStringInfo({
+                            DataString0: DataString0,
+                            DataString1: DataString1,
+                            DataString2: DataString2,
+                            DataString3: DataString3,
+                            DataString4: DataString4,
+                            DataString5: DataString5,
+                            DataString6: DataString6,
+                            DataString7: DataString7,
+                            DataString8: DataString8
+                        });
+
+                        //Pass Thru from previous response
+                        requestData2.setAdditionalInfo({
+                            MsgType: responseData.MsgType,
+                            sMsg04: responseData.sMsg04
+                        });
+
+                        const sanizedRqData2 = deepStringify(requestData2);
+                        const logJsonInfo2 = JSON.stringify(sanizedRqData2, null, 2);
+                        await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo2, LogLevel.DEBUG);
+                        var responseData2 = await processRequest(sanizedRqData2);
+
+                        if (!responseData2.IsSuccess && !isTest) {
+                            await parent.TerminalApi.ShowCustomAlert("ParnasRewardMembership2",
+                                JSON.stringify(responseData2.ResponseMessage, null, 2), 2);
+                        } else { await logToWorker("ParnasRewardMembership2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
+                    }
+                    // #endregion
                 }
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }

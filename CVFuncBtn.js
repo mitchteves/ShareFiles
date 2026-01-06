@@ -31,6 +31,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_487", "LastCardSlip");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_488", "ManualCard");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_489", "ReopenErrCard");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_490", "CEPSettings");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_491", "ParnasRewardMembership");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_492", "MemberDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_493", "EmployeeDiscount");
@@ -677,7 +678,7 @@ async function GetAllInfo(jsFunc, rqType, rqName, requestData, getBasicInfo, get
 }
 // #endregion
 
-// #region "PreFunctionButton_370", "MemberInquiry" - For Testing
+// #region "PreFunctionButton_370", "MemberInquiry"
 async function MemberInquiry() {
     var jsFunc = "370";
     var rqType = "PreFunctionButton_370";
@@ -704,7 +705,7 @@ async function MemberInquiry() {
 }
 // #endregion
 
-// #region "PreFunctionButton_371", "MemberDiscount" - For Testing|Pending Result AppliedDc Update
+// #region "PreFunctionButton_371", "MemberDiscount"
 async function MemberDiscount() {
     var jsFunc = "371";
     var rqType = "PreFunctionButton_371";
@@ -804,7 +805,7 @@ async function MemberDiscount() {
 }
 // #endregion
 
-// #region "PreFunctionButton_372", "EmployeeDiscount" - For Testing|Pending Result AppliedDc Update
+// #region "PreFunctionButton_372", "EmployeeDiscount"
 async function EmployeeDiscount() {
     var jsFunc = "372";
     var rqType = "PreFunctionButton_372";
@@ -904,7 +905,7 @@ async function EmployeeDiscount() {
 }
 // #endregion
 
-// #region "PreFunctionButton_373", "CheckDiscount" - For Testing|Pending Result AppliedDc Update
+// #region "PreFunctionButton_373", "CheckDiscount"
 async function CheckDiscount() {
     var jsFunc = "373";
     var rqType = "PreFunctionButton_373";
@@ -1001,7 +1002,7 @@ async function CheckDiscount() {
 }
 // #endregion
 
-// #region "PreFunctionButton_374", "ItemDiscount" - For Testing & Confirmation|Pending Result AppliedDc Update
+// #region "PreFunctionButton_374", "ItemDiscount"
 async function ItemDiscount() {
     var jsFunc = "374";
     var rqType = "PreFunctionButton_374";
@@ -1058,7 +1059,7 @@ async function ItemDiscount() {
 }
 // #endregion
 
-// #region "PreFunctionButton_375", "SalesGiftGC" - Not Used
+// #region "PreFunctionButton_375", "SalesGiftGC"
 async function SalesGiftGC() {
     var jsFunc = "375";
     var rqType = "PreFunctionButton_375";
@@ -1083,7 +1084,7 @@ async function SalesGiftGC() {
 }
 // #endregion
 
-// #region "PreFunctionButton_376", "PaidGiftGC" - Not Used
+// #region "PreFunctionButton_376", "PaidGiftGC"
 async function PaidGiftGC() {
     var jsFunc = "376";
     var rqType = "PreFunctionButton_376";
@@ -1108,7 +1109,7 @@ async function PaidGiftGC() {
 }
 // #endregion
 
-// #region "PreFunctionButton_378", "RptCheckByTable" - For Testing
+// #region "PreFunctionButton_378", "RptCheckByTable"
 async function RptCheckByTable() {
     var jsFunc = "378";
     var rqType = "PreFunctionButton_378";
@@ -1133,7 +1134,7 @@ async function RptCheckByTable() {
 }
 // #endregion
 
-// #region "PreFunctionButton_379", "RoomDetailSearch" - For Testing
+// #region "PreFunctionButton_379", "RoomDetailSearch"
 async function RoomDetailSearch() {
     var jsFunc = "379";
     var rqType = "PreFunctionButton_379";
@@ -1172,7 +1173,7 @@ async function RoomDetailSearch() {
 }
 // #endregion
 
-// #region "PreFunctionButton_377", "CCDiscount" - For Testing|Pending Result AppliedDc Update
+// #region "PreFunctionButton_377", "CCDiscount"
 async function CCDiscount() {
     var jsFunc = "377";
     var rqType = "PreFunctionButton_377";
@@ -1270,7 +1271,7 @@ async function CCDiscount() {
 }
 // #endregion
 
-// #region "PreFunctionButton_480", "CCDiscountNew" - For Testing|Pending Result AppliedDc Update
+// #region "PreFunctionButton_480", "CCDiscountNew"
 async function CCDiscountNew() {
     var jsFunc = "480";
     var rqType = "PreFunctionButton_480";
@@ -1368,7 +1369,7 @@ async function CCDiscountNew() {
 }
 // #endregion
 
-// #region "PreFunctionButton_481", "CCLookupDc" - For Testing|Pending Result AppliedDc Update
+// #region "PreFunctionButton_481", "CCLookupDc"
 async function CCLookupDc() {
     var jsFunc = "481";
     var rqType = "PreFunctionButton_481";
@@ -1447,7 +1448,7 @@ async function CCLookupDc() {
 }
 // #endregion
 
-// #region "PreFunctionButton_486", "PrintCardSlip" - For Testing
+// #region "PreFunctionButton_486", "PrintCardSlip"
 async function PrintCardSlip() {
     var jsFunc = "486";
     var rqType = "PreFunctionButton_486";
@@ -1485,7 +1486,7 @@ async function PrintCardSlip() {
 }
 // #endregion
 
-// #region "PreFunctionButton_487", "LastCardSlip" - For Testing
+// #region "PreFunctionButton_487", "LastCardSlip"
 async function LastCardSlip() {
     var jsFunc = "487";
     var rqType = "PreFunctionButton_487";
@@ -1510,7 +1511,7 @@ async function LastCardSlip() {
 }
 // #endregion
 
-// #region "PreFunctionButton_488", "ManualCard" - For Testing
+// #region "PreFunctionButton_488", "ManualCard"
 async function ManualCard() {
     var jsFunc = "488";
     var rqType = "PreFunctionButton_488";
@@ -1535,11 +1536,37 @@ async function ManualCard() {
 }
 // #endregion
 
-// #region "PreFunctionButton_489", "ReopenErrCard" - For Testing
+// #region "PreFunctionButton_489", "ReopenErrCard"
 async function ReopenErrCard() {
     var jsFunc = "489";
     var rqType = "PreFunctionButton_489";
     var rqName = "ReopenErrCard";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqName,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(rqName + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+
+// #region "PreFunctionButton_490", "CEPSettings"
+async function ReopenErrCard() {
+    var jsFunc = "490";
+    var rqType = "PreFunctionButton_490";
+    var rqName = "CEPSettings";
     var requestData = new RequestDataStructure();
 
     try {

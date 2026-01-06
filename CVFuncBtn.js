@@ -1563,7 +1563,7 @@ async function ReopenErrCard() {
 
 
 // #region "PreFunctionButton_490", "CEPSettings"
-async function ReopenErrCard() {
+async function CEPSettings() {
     var jsFunc = "490";
     var rqType = "PreFunctionButton_490";
     var rqName = "CEPSettings";

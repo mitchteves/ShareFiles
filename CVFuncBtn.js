@@ -1818,7 +1818,15 @@ async function PreVoidItem() {
             if (!responseData.IsSuccess && !isTest) {
                 await parent.TerminalApi.ShowCustomAlert(rqType,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-            } else { await logToWorker(rqType + CL + responseData.ResponseMessage, LogLevel.INFO); }
+            } else {
+                await logToWorker(rqType + CL + responseData.ResponseMessage, LogLevel.INFO);
+
+                //20260109 Added clearing of DataString after void processing if any
+                //Set the Check DataString with the Member Dc Information
+                for (var dataString of responseData.DataStrings) {
+                    await SetDataString(dataString.Data, dataString.Idx);
+                };
+            }
         } else { await logToWorker(rqType + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(rqType + BR + error, LogLevel.ERROR); }
 }

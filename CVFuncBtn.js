@@ -11,6 +11,7 @@ const isTest = false;
         if (!isTest) {
 
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_46", "PreVoidItem");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_46", "PostVoidItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_54", "PreClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_54", "PostClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_160", "PreReOpenClosedCheck");
@@ -1777,6 +1778,9 @@ async function PreVoidCheck() {
 }
 // #endregion
 
+//20260112 Added global variable to indicate clearing of Check DataString after Void processing
+var isClearDataStringsAfterVoid = false;
+
 // #region "PreVoidChkEntities" (), "PreFunctionButton_46" (Item,Discount, Tender) => Both call this function
 async function PreVoidItem() {
     var jsFunc = "46";
@@ -1823,14 +1827,33 @@ async function PreVoidItem() {
 
                 var checkInfo = await GetCheckObjectFromIG();
                 if (responseData.ClearCheckDataTag) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
-                
-                ////20260109 Added clearing of DataString after void processing if any
-                ////Set the Check DataString with the Member Dc Information
-                //for (var dataString of responseData.DataStrings) {
-                //    await SetDataString(dataString.Data, dataString.Idx);
-                //};
+                if (responseData.ClearDataString) isClearDataStringsAfterVoid = true;
             }
         } else { await logToWorker(rqType + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(rqType + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PreVoidChkEntities" (), "PostFunctionButton_46" (Item,Discount, Tender) => Both call this function
+async function PostVoidItem() {
+    var jsFunc = "46";
+    var rqType = "PostFunctionButton_46";
+    var rqName = "PostVoidItem";
+    var requestData = new RequestDataStructure();
+
+    try {
+        //20260109 Added clearing of DataString after void processing if any
+        if (isClearDataStringsAfterVoid) {
+            // JavaScript for-loop syntax with block-scoped counter
+            for (let i = 0; i < 10; i++) {
+                await SetDataString("", i);
+            }
+
+            await logToWorker(rqType + BR + "Cleared All DataString.", LogLevel.INFO);
+
+            // reset the flag to avoid repeated clears
+            isClearDataStringsAfterVoid = false;
+        }
     } catch (error) { await logToWorker(rqType + BR + error, LogLevel.ERROR); }
 }
 // #endregion

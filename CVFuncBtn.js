@@ -1821,6 +1821,8 @@ async function PreVoidItem() {
             } else {
                 await logToWorker(rqType + CL + responseData.ResponseMessage, LogLevel.INFO);
 
+                if (responseData.ClearCheckDataTag) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
+                
                 //20260109 Added clearing of DataString after void processing if any
                 //Set the Check DataString with the Member Dc Information
                 for (var dataString of responseData.DataStrings) {

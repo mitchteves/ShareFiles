@@ -1778,9 +1778,6 @@ async function PreVoidCheck() {
 }
 // #endregion
 
-//20260112 Added global variable to indicate clearing of Check DataString after Void processing
-var isClearDataStringsAfterVoid = false;
-
 // #region "PreVoidChkEntities" (), "PreFunctionButton_46" (Item,Discount, Tender) => Both call this function
 async function PreVoidItem() {
     var jsFunc = "46";
@@ -1827,7 +1824,6 @@ async function PreVoidItem() {
 
                 var checkInfo = await GetCheckObjectFromIG();
                 if (responseData.ClearCheckDataTag) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
-                if (responseData.ClearDataString) isClearDataStringsAfterVoid = true;
             }
         } else { await logToWorker(rqType + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(rqType + BR + error, LogLevel.ERROR); }
@@ -1842,18 +1838,24 @@ async function PostVoidItem() {
     var requestData = new RequestDataStructure();
 
     try {
+
+        var ClearDataStringFileRqPath = "C:\\InfoGenesis\\ClearDataString.txt";
+
+        var FileContent = await parent.TerminalApi.FileRead(ClearDataStringFileRqPath);
+        await logToWorker(rqType + BR + "FileContent:" + FileContent, LogLevel.INFO);
+
         //20260109 Added clearing of DataString after void processing if any
-        if (isClearDataStringsAfterVoid) {
-            // JavaScript for-loop syntax with block-scoped counter
-            for (let i = 0; i < 10; i++) {
-                await SetDataString("", i);
-            }
+        //if (isClearDataStringsAfterVoid) {
+        //    // JavaScript for-loop syntax with block-scoped counter
+        //    for (let i = 0; i < 10; i++) {
+        //        await SetDataString("", i);
+        //    }
 
-            await logToWorker(rqType + BR + "Cleared All DataString.", LogLevel.INFO);
+        //    await logToWorker(rqType + BR + "Cleared All DataString.", LogLevel.INFO);
 
-            // reset the flag to avoid repeated clears
-            isClearDataStringsAfterVoid = false;
-        }
+        //    // reset the flag to avoid repeated clears
+        //    isClearDataStringsAfterVoid = false;
+        //}
     } catch (error) { await logToWorker(rqType + BR + error, LogLevel.ERROR); }
 }
 // #endregion

@@ -1839,7 +1839,7 @@ async function PostVoidItem() {
 
     try {
 
-        var ClearDataStringFileRqPath = "C:\\InfoGenesis\\ClearDataString.txt";
+        var ClearDataStringFileRqPath = "C:\\InfoGenesis\\ClearDataString.json";
 
         var FileContent = await parent.TerminalApi.FileRead(ClearDataStringFileRqPath);
         await logToWorker(rqType + BR + "FileContent:" + FileContent, LogLevel.INFO);
@@ -2201,4 +2201,5 @@ if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();
 if (isTest) RptCheckByTable();
 if (isTest) RoomDetailSearch();
+
 

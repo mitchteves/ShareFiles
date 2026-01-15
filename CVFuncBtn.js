@@ -1830,7 +1830,7 @@ async function PreVoidItem() {
 }
 // #endregion
 
-// #region "PreVoidChkEntities" (), "PostFunctionButton_46" (Item,Discount, Tender) => Both call this function
+// #region "PostVoidChkEntities" (), "PostFunctionButton_46" (Item,Discount, Tender) => Both call this function
 async function PostVoidItem() {
     var jsFunc = "46";
     var rqType = "PostFunctionButton_46";
@@ -1839,23 +1839,31 @@ async function PostVoidItem() {
 
     try {
 
-        var ClearDataStringFileRqPath = "C:\\InfoGenesis\\ClearDataString.json";
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
-        var FileContent = await parent.TerminalApi.FileRead(ClearDataStringFileRqPath);
-        await logToWorker(rqType + BR + "FileContent:" + FileContent, LogLevel.INFO);
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(rqType + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
 
-        //20260109 Added clearing of DataString after void processing if any
-        //if (isClearDataStringsAfterVoid) {
-        //    // JavaScript for-loop syntax with block-scoped counter
-        //    for (let i = 0; i < 10; i++) {
-        //        await SetDataString("", i);
-        //    }
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(rqType,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(rqType + CL + responseData.ResponseMessage, LogLevel.INFO);
 
-        //    await logToWorker(rqType + BR + "Cleared All DataString.", LogLevel.INFO);
+                //20260115 Added clearing of DataString after void processing if any
+                if (responseData.CheckDataString) {
+                    //Set the Check DataString with the Member Dc Information
+                    for (var dataString of responseData.DataStrings) {
+                        await SetDataString(dataString.Data, dataString.Idx);
+                    };
 
-        //    // reset the flag to avoid repeated clears
-        //    isClearDataStringsAfterVoid = false;
-        //}
+                    await logToWorker(rqType + BR + "Cleared DataString.", LogLevel.INFO);
+                }
+            }
+        } else { await logToWorker(rqType + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(rqType + BR + error, LogLevel.ERROR); }
 }
 // #endregion
@@ -2201,5 +2209,4 @@ if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();
 if (isTest) RptCheckByTable();
 if (isTest) RoomDetailSearch();
-
 

@@ -2003,7 +2003,7 @@ async function PreTender(event) {
 // #endregion
 
 // #region "PostTender", "PostTender"
-async function PostTender() {
+async function PostTender(event) {
     var jsFunc = "PostTender";
     var requestData = new RequestDataStructure();
 
@@ -2011,6 +2011,15 @@ async function PostTender() {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true);
 
         if (isProceed) {
+            //Add Code to ask for additional information
+            var getInput = (isTest) ? "0" : await parent.TerminalApi.GetKeyPadAmount();
+            var getId = (isTest) ? "0" : await event.invokeMethodAsync('GetParam', 'Id');
+
+            requestData.setAdditionalInfo({
+                UsrInput: getInput, //KeyPad Amount
+                TenderId: getId //Id Of the Tender Clicked
+            });
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);

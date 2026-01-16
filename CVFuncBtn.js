@@ -2003,8 +2003,7 @@ async function PreTender(event) {
 // #endregion
 
 // #region "PostTender", "PostTender"
-// 2026.01.16 Added event to get PosCheckData Testing
-async function PostTender(event) {
+async function PostTender() {
     var jsFunc = "PostTender";
     var requestData = new RequestDataStructure();
 
@@ -2012,16 +2011,6 @@ async function PostTender(event) {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true);
 
         if (isProceed) {
-            //2026.01.16 Added getting of posCheckData. Highlighted Note when post tender is not the tender
-            //need to find a different way to validate that the last tender is the selected tender.
-            var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
-            parent.window.posCheck = JSON.parse(posCheckData.check);
-
-            const sanizedChkData = deepStringify(parent.window.posCheck);
-            const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
-            requestData.setPosCheckData(sanizedChkData);
-            await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
-
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);

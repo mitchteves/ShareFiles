@@ -1907,15 +1907,17 @@ async function PreCancelCheck() {
             if (!responseData.IsSuccess && !isTest) {
                 await parent.TerminalApi.ShowCustomAlert(jsFunc,
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
-
-                if (responseData.RunTermFunc) {
-                    var checkInfo = await GetCheckObjectFromIG();
-                    var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
-
-                    await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
-                        JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
-                }
             } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+
+            //20260119 Regardless of success or failure, run the terminal function if indicated
+            if (responseData.RunTermFunc) {
+                var checkInfo = await GetCheckObjectFromIG();
+                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
+
+                await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
+                    JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+            }
+
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
@@ -2019,13 +2021,6 @@ async function PostTender(event) {
                 UsrInput: getInput, //KeyPad Amount
                 TenderId: getId //Id Of the Tender Clicked
             });
-
-            var posData = await event.invokeMethodAsync('GetParam', 'Request');
-            
-            const sanizedPosData = deepStringify(posData);
-            const logJsonPosInfo = JSON.stringify(sanizedPosData, null, 2);
-            //requestData.setPosCheckData(sanizedChkData);
-            await logToWorker(jsFunc + BR + logJsonPosInfo, LogLevel.DEBUG);
 
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);

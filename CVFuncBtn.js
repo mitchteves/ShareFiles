@@ -2020,6 +2020,13 @@ async function PostTender(event) {
                 TenderId: getId //Id Of the Tender Clicked
             });
 
+            var posData = await event.invokeMethodAsync('GetParam', 'Request');
+            
+            const sanizedPosData = deepStringify(posData);
+            const logJsonPosInfo = JSON.stringify(sanizedPosData, null, 2);
+            //requestData.setPosCheckData(sanizedChkData);
+            await logToWorker(jsFunc + BR + logJsonPosInfo, LogLevel.DEBUG);
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);

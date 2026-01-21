@@ -217,11 +217,14 @@ async function GetTerminalInfo(jsFunc, rqData) {
         var curMealPeriodId = (isTest) ? "01" : await parent.TerminalApi.GetCurrentMealPeriodId();
         var employeeId = (isTest) ? "999" : await parent.TerminalApi.GetSignedInEmpId();
         var employeeIdJobCode = (isTest) ? "01" : await parent.TerminalApi.GetSignedInEmpJobCodeId();
+        //2026.01.21 Add getting of EnterpriseId from POS
+        var enterpriseId = (isTest) ? "001" : await parent.TerminalApi.GetEnterpriseId();
 
         rqData.setTerminalInfo({
             TrmDt: terminalDate,
             TrmTm: terminalTime,
             TrmId: terminalId,
+            EntId: enterpriseId,
             PcId: profitCenterId,
             PcName: profitCenterName,
             PcPrId: profitCenterPrId,

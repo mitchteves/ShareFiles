@@ -1800,7 +1800,7 @@ async function PreVoidItem() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, true);
 
         if (isProceed) {
             var DataString0 = await parent.TerminalApi.GetDataString(0);

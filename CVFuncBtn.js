@@ -1732,6 +1732,17 @@ async function PostItem() {
                             "Add Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
                     };
                 }
+
+                //Analyze Response - If Special Instruction Details are provided, add to the check
+                if (responseData.AddSpecialInst) {
+                    for (var instruction of responseData.SpecialInstDetails) {
+                        //Add Item to Check
+                        var result = await parent.TerminalApi.AddSpecialInstruction(instruction);
+
+                        await logToWorker(jsFunc + CL + "|Add Instruction|" + instruction + BR + 
+                            "Add Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
+                    };
+                }
             }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }

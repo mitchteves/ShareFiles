@@ -1622,6 +1622,17 @@ async function ParnasRewardMembership() {
                     await SetDataString(dataString.Data, dataString.Idx);
                 };
 
+                //Analyze Response - If Menu Item Details are provided, add to the check
+                if (responseData.AddMenuItem) {
+                    for (var item of responseData.ItemDetails) {
+                        //Add Item to Check
+                        var result = await parent.TerminalApi.AddMenuItem(item.MenuItemId, item.MenuItemQty);
+
+                        await logToWorker(jsFunc + CL + "|Add Item|" + item.MenuItemId + BR + item.MenuItemQty + BR +
+                            "Add Status:" + JSON.stringify(result, null, 2), LogLevel.INFO);
+                    };
+                }
+
                 //Analyze Response - If Discount Details are provided, apply to the check
                 if (responseData.ApplyDiscount) {
                     for (var discount of responseData.DiscountDetails) {
@@ -1711,7 +1722,7 @@ async function PostItem() {
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
             } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
 
-                //Analyze Response - If Discount Details are provided, apply to the check
+                //Analyze Response - If Menu Item Details are provided, add to the check
                 if (responseData.AddMenuItem) {
                     for (var item of responseData.ItemDetails) {
                         //Add Item to Check

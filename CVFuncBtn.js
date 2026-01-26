@@ -2085,7 +2085,7 @@ async function PostTender(event) {
 // #endregion
 
 // #region "PreClosedCheck", "PreClosedCheck"
-async function PreClosedCheck() {
+async function PreClosedCheck(event) {
     var jsFunc = "PreClosedCheck";
     var requestData = new RequestDataStructure();
 
@@ -2093,6 +2093,16 @@ async function PreClosedCheck() {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
+            try {
+                var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+                parent.window.posCheck = JSON.parse(posCheckData.check);
+
+                const sanizedChkData = deepStringify(parent.window.posCheck);
+                const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+                requestData.setPosCheckData(sanizedChkData);
+                await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+            } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
@@ -2108,7 +2118,7 @@ async function PreClosedCheck() {
 // #endregion
 
 // #region "PostClosedCheck", "PostClosedCheck"
-async function PostClosedCheck() {
+async function PostClosedCheck(event) {
     var jsFunc = "PostClosedCheck";
     var requestData = new RequestDataStructure();
 
@@ -2116,6 +2126,16 @@ async function PostClosedCheck() {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
+            try {
+                var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+                parent.window.posCheck = JSON.parse(posCheckData.check);
+
+                const sanizedChkData = deepStringify(parent.window.posCheck);
+                const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+                requestData.setPosCheckData(sanizedChkData);
+                await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+            } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
@@ -2131,7 +2151,7 @@ async function PostClosedCheck() {
 // #endregion
 
 // #region "PreReOpenClosedCheck", "PreReOpenClosedCheck"
-async function PreReOpenClosedCheck() {
+async function PreReOpenClosedCheck(event) {
     var jsFunc = "PreReOpenClosedCheck";
     var requestData = new RequestDataStructure();
 
@@ -2139,6 +2159,16 @@ async function PreReOpenClosedCheck() {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
+            try {
+                var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+                parent.window.posCheck = JSON.parse(posCheckData.check);
+
+                const sanizedChkData = deepStringify(parent.window.posCheck);
+                const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+                requestData.setPosCheckData(sanizedChkData);
+                await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+            } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
@@ -2154,7 +2184,7 @@ async function PreReOpenClosedCheck() {
 // #endregion
 
 // #region "PostReOpenClosedCheck", "PostReOpenClosedCheck"
-async function PostReOpenClosedCheck() {
+async function PostReOpenClosedCheck(event) {
     var jsFunc = "PostReOpenClosedCheck";
     var requestData = new RequestDataStructure();
 
@@ -2162,6 +2192,16 @@ async function PostReOpenClosedCheck() {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
+            try {
+                var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+                parent.window.posCheck = JSON.parse(posCheckData.check);
+
+                const sanizedChkData = deepStringify(parent.window.posCheck);
+                const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+                requestData.setPosCheckData(sanizedChkData);
+                await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+            } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
@@ -2177,7 +2217,7 @@ async function PostReOpenClosedCheck() {
 // #endregion
 
 // #region "PrePrintClosedCheck", "PrePrintClosedCheck"
-async function PrePrintClosedCheck() {
+async function PrePrintClosedCheck(event) {
     var jsFunc = "PrePrintClosedCheck";
     var requestData = new RequestDataStructure();
 
@@ -2185,6 +2225,16 @@ async function PrePrintClosedCheck() {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
+            try {
+                var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+                parent.window.posCheck = JSON.parse(posCheckData.check);
+
+                const sanizedChkData = deepStringify(parent.window.posCheck);
+                const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+                requestData.setPosCheckData(sanizedChkData);
+                await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+            } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
@@ -2200,7 +2250,7 @@ async function PrePrintClosedCheck() {
 // #endregion
 
 // #region "PostPrintClosedCheck", "PostPrintClosedCheck"
-async function PostPrintClosedCheck() {
+async function PostPrintClosedCheck(event) {
     var jsFunc = "PostPrintClosedCheck";
     var requestData = new RequestDataStructure();
 
@@ -2208,6 +2258,16 @@ async function PostPrintClosedCheck() {
         var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
+            try {
+                var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+                parent.window.posCheck = JSON.parse(posCheckData.check);
+
+                const sanizedChkData = deepStringify(parent.window.posCheck);
+                const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+                requestData.setPosCheckData(sanizedChkData);
+                await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+            } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
             await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);

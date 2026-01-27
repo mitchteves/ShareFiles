@@ -40,6 +40,7 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_491", "ParnasRewardMembership");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_492", "PreCustomReOpenClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_492", "PostCustomReOpenClosedCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_493", "HelpGuideFor12UX");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
@@ -1704,6 +1705,32 @@ async function ParnasRewardMembership() {
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+//20260127 Added New Function for Tracking of Card Payment via AGYS
+// #region "PreFunctionButton_493", "HelpGuideFor12UX"
+async function HelpGuideFor12UX() {
+    var jsFunc = "493";
+    var rqType = "PreFunctionButton_493";
+    var rqName = "12UXHelpGuide";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
 }
 // #endregion
 

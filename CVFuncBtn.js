@@ -28,6 +28,8 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_377", "CCDiscount");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_378", "RptCheckByTable");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_379", "RoomDetailSearch");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_465", "PreAgysCardPayment");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_465", "PostAgysCardPayment");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_480", "CCDiscountNew");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_481", "CCLookupDc");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_486", "PrintCardSlip");
@@ -36,8 +38,8 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_489", "ReopenErrCard");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_490", "CEPSettings");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_491", "ParnasRewardMembership");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_492", "MemberDiscount");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_493", "EmployeeDiscount");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_492", "PreCustomReOpenClosedCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_492", "PostCustomReOpenClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
@@ -2084,6 +2086,69 @@ async function PostTender(event) {
 }
 // #endregion
 
+//20260127 Added New Function for Tracking of Card Payment via AGYS
+// #region "PreFunctionButton_465", "PreAgysCardPayment"
+async function PreAgysCardPayment() {
+    var jsFunc = "465";
+    var rqType = "PreFunctionButton_465";
+    var rqName = "PreAgysCardPayment";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
+            }
+
+            if (responseData.RunTermFunc) {
+                var checkInfo = await GetCheckObjectFromIG();
+                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
+
+                await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
+                    JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+            }
+
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+//20260127 Added New Function for Tracking of Card Payment via AGYS
+// #region "PostFunctionButton_465", "PostAgysCardPayment"
+async function PostAgysCardPayment() {
+    var jsFunc = "465";
+    var rqType = "PostFunctionButton_465";
+    var rqName = "PostAgysCardPayment";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
 // #region "PreClosedCheck", "PreClosedCheck"
 async function PreClosedCheck() {
     var jsFunc = "PreClosedCheck";
@@ -2167,6 +2232,69 @@ async function PreReOpenClosedCheck() {
 // #region "PostReOpenClosedCheck", "PostReOpenClosedCheck"
 async function PostReOpenClosedCheck() {
     var jsFunc = "PostReOpenClosedCheck";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+//20260127 Added New Function for Re-Open Today's Check New Logic
+// #region "PreFunctionButton_492", "PreCustomReOpenClosedCheck"
+async function PreCustomReOpenClosedCheck() {
+    var jsFunc = "492";
+    var rqType = "PreFunctionButton_492";
+    var rqName = "PreCustomReOpenClosedCheck";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else {
+                await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
+            }
+
+            if (responseData.RunTermFunc) {
+                var checkInfo = await GetCheckObjectFromIG();
+                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
+
+                await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
+                    JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+            }
+
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+//20260127 Added New Function for Re-Open Today's Check New Logic
+// #region "PostFunctionButton_492", "PostCustomReOpenClosedCheck"
+async function PostCustomReOpenClosedCheck() {
+    var jsFunc = "492";
+    var rqType = "PostFunctionButton_492";
+    var rqName = "PostCustomReOpenClosedCheck";
     var requestData = new RequestDataStructure();
 
     try {

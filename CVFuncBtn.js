@@ -1717,7 +1717,7 @@ async function HelpGuideFor12UX() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);

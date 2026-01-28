@@ -1965,6 +1965,12 @@ async function PreCancelCheck() {
                     JSON.stringify(responseData.ResponseMessage, null, 2), 2);
             } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
 
+            //20260128 Added to show alert before running terminal function
+            if (responseData.ShowCustomAlert) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            }
+
             //20260119 Regardless of success or failure, run the terminal function if indicated
             if (responseData.RunTermFunc) {
                 var checkInfo = await GetCheckObjectFromIG();
@@ -2122,7 +2128,7 @@ async function PreAgysCardPayment() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2159,7 +2165,7 @@ async function PostAgysCardPayment() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2288,7 +2294,7 @@ async function PreCustomReOpenClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2325,7 +2331,7 @@ async function PostCustomReOpenClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);

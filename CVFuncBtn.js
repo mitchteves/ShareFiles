@@ -2306,6 +2306,7 @@ async function PostReOpenClosedCheck() {
                 await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
 
                 //20260128 Update Guest Information after Re-Open Closed Check
+                var checkInfo = await GetCheckObjectFromIG();
                 if (!isEmpty(responseData.GuestId)) await SetCheckGuestId(checkInfo, responseData.GuestId);
                 if (!isEmpty(responseData.CheckDataTag)) await SetCheckDataTag(checkInfo, responseData.CheckDataTag);
                 if (!isEmpty(responseData.GuestName)) await SetCheckGuestName(checkInfo, responseData.GuestName);

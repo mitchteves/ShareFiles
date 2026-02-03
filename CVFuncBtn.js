@@ -2105,11 +2105,11 @@ async function PostTender(event) {
 
                 if (responseData.SetTenderXtraData) {
                     var checkInfo = await GetCheckObjectFromIG();
-                    var highlightedNode = (isTest) ? 2 : await parent.TerminalApi.GetIndexOfHighlightedNode(checkInfo);
+                    var nodes = (isTest) ? "checkNodesCollection" : await parent.TerminalApi.GetCheckNodeCollection(checkInfo);
 
                     await parent.TerminalApi.PreSetTenderExtraData(responseData.TenderExtraData);
-
-                    var tenderXtrData = (isTest) ? "tenderXtrData" : await parent.TerminalApi.GetTenderExtraData(highlightedNode);
+                    
+                    var tenderXtrData = (isTest) ? "tenderXtrData" : await parent.TerminalApi.GetTenderExtraData(nodes[responseData.TndrIdx]);
 
                     await logToWorker(jsFunc + CL + "tenderXtrData:" + tenderXtrData, LogLevel.INFO);
                 }

@@ -2060,6 +2060,18 @@ async function PreTender(event) {
                         } else { await logToWorker("PreTender2" + CL + responseData2.ResponseMessage, LogLevel.INFO); }
                     }
                 }
+
+                //20260203 Added this code to set Tender Extra Data during PreTender instead of PostTender
+                //BugFix that TenderExtraData is being set not for the current tender, but the following tender
+                if (responseData.SetTenderXtraData) {
+                    var nodes = (isTest) ? "checkNodesCollection" : await parent.TerminalApi.GetCheckNodeCollection(checkInfo);
+
+                    await parent.TerminalApi.PreSetTenderExtraData(responseData.TenderExtraData);
+
+                    var tenderXtrData = (isTest) ? "tenderXtrData" : await parent.TerminalApi.GetTenderExtraData(nodes[responseData.TndrIdx]);
+
+                    await logToWorker(jsFunc + CL + "tenderXtrData:" + tenderXtrData, LogLevel.INFO);
+                }
             }
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }

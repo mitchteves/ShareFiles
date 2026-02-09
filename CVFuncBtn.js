@@ -1702,6 +1702,14 @@ async function ParnasRewardMembership() {
                     }
                     // #endregion
                 }
+
+                //20260209 If Keypad Input is provided, set the Keypad Amount
+                if (responseData.SetKeypadInput) {
+                    var setkeypad = parent.TerminalApi.SetKeyPadAmount(checkInfo, responseData.KeypadInput);
+
+                    await logToWorker(rqName + CL + "|SetKeypadAmt:" + responseData.KeypadInput + BR +
+                        "Application Status:" + JSON.stringify(setkeypad, null, 2), LogLevel.INFO);
+                }
             }
         } else { await logToWorker(rqName + BR + jsFunc + NL + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(rqName + BR + error, LogLevel.ERROR); }

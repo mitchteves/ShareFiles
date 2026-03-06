@@ -2483,13 +2483,14 @@ async function PrepareCheckReceipt(event) {
                 DataString8: DataString8
             });
 
-            var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
-            parent.window.posCheck = JSON.parse(posCheckData.check);
+            //20260306 Isolate Case if this could be the issue
+            //var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+            //parent.window.posCheck = JSON.parse(posCheckData.check);
 
-            const sanizedChkData = deepStringify(parent.window.posCheck);
-            const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
-            requestData.setPosCheckData(sanizedChkData);
-            await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+            //const sanizedChkData = deepStringify(parent.window.posCheck);
+            //const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+            //requestData.setPosCheckData(sanizedChkData);
+            //await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
 
             const sanizedRqData = deepStringify(requestData);
             const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);

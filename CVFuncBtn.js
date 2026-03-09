@@ -2500,42 +2500,42 @@ async function PrepareCheckReceipt(event) {
 
             await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
 
-            await parent.window.Receipt.GetReceiptText(event);
-            await parent.TerminalApi.ReceiptInit();
+            //await parent.window.Receipt.GetReceiptText(event);
+            //await parent.TerminalApi.ReceiptInit();
 
-            await parent.TerminalApi.ReceiptOrderHeader();
-            if (responseData.AddCustomReceipt){
-                for (var customText of responseData.CR_AfterOrderHeader) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
+            //await parent.TerminalApi.ReceiptOrderHeader();
+            //if (responseData.AddCustomReceipt){
+            //    for (var customText of responseData.CR_AfterOrderHeader) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
 
-            await parent.TerminalApi.ReceiptMenuItems();
-            if (responseData.AddCustomReceipt) {
-                for (var customText of responseData.CR_AfterMenuItems) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
+            //await parent.TerminalApi.ReceiptMenuItems();
+            //if (responseData.AddCustomReceipt) {
+            //    for (var customText of responseData.CR_AfterMenuItems) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
 
-            await parent.TerminalApi.ReceiptSubTotal();
-            if (responseData.AddCustomReceipt) {
-                for (var customText of responseData.CR_AfterSubTotal) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
+            //await parent.TerminalApi.ReceiptSubTotal();
+            //if (responseData.AddCustomReceipt) {
+            //    for (var customText of responseData.CR_AfterSubTotal) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
 
-            await parent.TerminalApi.ReceiptTenders();
-            if (responseData.AddCustomReceipt) {
-                for (var customText of responseData.CR_AfterTenders) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
+            //await parent.TerminalApi.ReceiptTenders();
+            //if (responseData.AddCustomReceipt) {
+            //    for (var customText of responseData.CR_AfterTenders) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
 
-            if (responseData.ReplaceFooter) {
-                for (var customText of responseData.CR_NewFooter) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);
-                }}
-            else { await parent.TerminalApi.ReceiptFooter(); }
+            //if (responseData.ReplaceFooter) {
+            //    for (var customText of responseData.CR_NewFooter) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);
+            //    }}
+            //else { await parent.TerminalApi.ReceiptFooter(); }
 
-            if (responseData.AddCustomReceipt) {
-                for (var customText of responseData.CR_AfterFooter) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
+            //if (responseData.AddCustomReceipt) {
+            //    for (var customText of responseData.CR_AfterFooter) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
 
-            var receipt = await parent.TerminalApi.GetReceiptText();
-            await event.invokeMethodAsync('SetParam', 'Receipt', receipt);
-            await logToWorker(jsFunc + CL + "Receipt-" + receipt, LogLevel.INFO);
+            //var receipt = await parent.TerminalApi.GetReceiptText();
+            //await event.invokeMethodAsync('SetParam', 'Receipt', receipt);
+            //await logToWorker(jsFunc + CL + "Receipt-" + receipt, LogLevel.INFO);
 
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }

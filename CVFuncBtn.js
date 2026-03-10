@@ -48,8 +48,8 @@ const isTest = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreCancelCheck", "PreCancelCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostTender", "PostTender");
-            //parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceipt", "PrepareCheckReceipt");
-            //parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceiptV2", "PrepareCheckReceipt");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceipt", "PrepareCheckReceipt");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceiptV2", "PrepareCheckReceipt");
         }
     }
     catch (error) { console.log("Register catch: " + error); }
@@ -2483,58 +2483,66 @@ async function PrepareCheckReceipt(event) {
                 DataString8: DataString8
             });
 
-            var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
-            parent.window.posCheck = JSON.parse(posCheckData.check);
+            //var posCheckData = await event.invokeMethodAsync('GetParam', 'Request');
+            //parent.window.posCheck = JSON.parse(posCheckData.check);
 
-            const sanizedChkData = deepStringify(parent.window.posCheck);
-            const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
-            requestData.setPosCheckData(sanizedChkData);
-            await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
+            //const sanizedChkData = deepStringify(parent.window.posCheck);
+            //const logJsonCheckInfo = JSON.stringify(sanizedChkData, null, 2);
+            //requestData.setPosCheckData(sanizedChkData);
+            //await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
 
-            const sanizedRqData = deepStringify(requestData);
-            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
-            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            //const sanizedRqData = deepStringify(requestData);
+            //const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            //await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
 
             var responseData = await processRequest(sanizedRqData);
 
             await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO);
 
-            await parent.window.Receipt.GetReceiptText(event);
+            //await parent.window.Receipt.GetReceiptText(event);
+            //await parent.TerminalApi.ReceiptInit();
+
+            //await parent.TerminalApi.ReceiptOrderHeader();
+            //if (responseData.AddCustomReceipt){
+            //    for (var customText of responseData.CR_AfterOrderHeader) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
+
+            //await parent.TerminalApi.ReceiptMenuItems();
+            //if (responseData.AddCustomReceipt) {
+            //    for (var customText of responseData.CR_AfterMenuItems) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
+
+            //await parent.TerminalApi.ReceiptSubTotal();
+            //if (responseData.AddCustomReceipt) {
+            //    for (var customText of responseData.CR_AfterSubTotal) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
+
+            //await parent.TerminalApi.ReceiptTenders();
+            //if (responseData.AddCustomReceipt) {
+            //    for (var customText of responseData.CR_AfterTenders) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
+
+            //if (responseData.ReplaceFooter) {
+            //    for (var customText of responseData.CR_NewFooter) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);
+            //    }}
+            //else { await parent.TerminalApi.ReceiptFooter(); }
+
+            //if (responseData.AddCustomReceipt) {
+            //    for (var customText of responseData.CR_AfterFooter) {
+            //        await parent.TerminalApi.ReceiptAppendText(customText);}}
+
+            //var receipt = await parent.TerminalApi.GetReceiptText();
+            //await event.invokeMethodAsync('SetParam', 'Receipt', receipt);
+            //await logToWorker(jsFunc + CL + "Receipt-" + receipt, LogLevel.INFO);
             await parent.TerminalApi.ReceiptInit();
-
             await parent.TerminalApi.ReceiptOrderHeader();
-            if (responseData.AddCustomReceipt){
-                for (var customText of responseData.CR_AfterOrderHeader) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
-
             await parent.TerminalApi.ReceiptMenuItems();
-            if (responseData.AddCustomReceipt) {
-                for (var customText of responseData.CR_AfterMenuItems) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
-
             await parent.TerminalApi.ReceiptSubTotal();
-            if (responseData.AddCustomReceipt) {
-                for (var customText of responseData.CR_AfterSubTotal) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
-
             await parent.TerminalApi.ReceiptTenders();
-            if (responseData.AddCustomReceipt) {
-                for (var customText of responseData.CR_AfterTenders) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
-
-            if (responseData.ReplaceFooter) {
-                for (var customText of responseData.CR_NewFooter) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);
-                }}
-            else { await parent.TerminalApi.ReceiptFooter(); }
-
-            if (responseData.AddCustomReceipt) {
-                for (var customText of responseData.CR_AfterFooter) {
-                    await parent.TerminalApi.ReceiptAppendText(customText);}}
-
+            await parent.TerminalApi.ReceiptFooter();
             var receipt = await parent.TerminalApi.GetReceiptText();
             await event.invokeMethodAsync('SetParam', 'Receipt', receipt);
-            await logToWorker(jsFunc + CL + "Receipt-" + receipt, LogLevel.INFO);
 
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
     } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }

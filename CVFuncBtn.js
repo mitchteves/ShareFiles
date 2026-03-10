@@ -2491,9 +2491,9 @@ async function PrepareCheckReceipt(event) {
             //requestData.setPosCheckData(sanizedChkData);
             //await logToWorker(jsFunc + BR + logJsonCheckInfo, LogLevel.DEBUG);
 
-            //const sanizedRqData = deepStringify(requestData);
-            //const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
-            //await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
 
             var responseData = await processRequest(sanizedRqData);
 

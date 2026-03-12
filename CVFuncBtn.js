@@ -1261,6 +1261,10 @@ async function CCDiscount() {
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
                             sMsg04: responseData.sMsg04,
+                            sMsg05: responseData.sMsg05,
+                            sMsg06: responseData.sMsg06,
+                            sMsg07: responseData.sMsg07,
+                            sMsg08: responseData.sMsg08,
                             ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
                             ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
                             ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC

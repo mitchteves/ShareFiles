@@ -43,8 +43,8 @@ const isDisabled = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_492", "PostCustomReOpenClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_493", "HelpGuideFor12UX");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
-            parent.TerminalApi.Subscribe(window.frameElement.id, "PostSaveCheck", "PostSaveCheck");
+            //parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
+            //parent.TerminalApi.Subscribe(window.frameElement.id, "PostSaveCheck", "PostSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
             //parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreCancelCheck", "PreCancelCheck");
@@ -258,7 +258,7 @@ async function GetCheckObjectFromIG() {
     return checkObject;
 }
 
-async function GetCheckBasicInfo(jsFunc, rqData, checkInfo, getRevInfo) {
+async function GetCheckBasicInfo(jsFunc, rqData, checkInfo) {
     try {
         // #region Check General Information
         //|1:string|8:number|OB 42:string|330003:string|11:string|true:boolean|false:boolean|false:boolean|
@@ -342,9 +342,7 @@ async function GetCheckBasicInfo(jsFunc, rqData, checkInfo, getRevInfo) {
         const sanizedRqData = deepStringify(rqData.CheckBasicInfo);
         const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
         await logToWorker("CheckBasicInfo " + jsFunc + NL + logJsonInfo, LogLevel.DEBUG);
-        //2026.03.16 Added Flag to enable disable adding of RevCat Info when getting check info
-        if (getRevInfo) { await GetCheckRevenueInfo(jsFunc, rqData, checkInfo); }
-
+        await GetCheckRevenueInfo(jsFunc, rqData, checkInfo);
         return isCheckOpen;
     } catch (error) { await logToWorker("CheckBasicInfo " + error, LogLevel.ERROR);
         return false; }
@@ -656,7 +654,7 @@ async function SetDataString(newDataString, index) {
 // #endregion
 
 // #region GetAllInfo Call Terminal & Check Functions as applicable
-async function GetAllInfo(jsFunc, rqType, rqName, requestData, getBasicInfo, getHighlightInfo, getRevInfo) {
+async function GetAllInfo(jsFunc, rqType, rqName, requestData, getBasicInfo, getHighlightInfo) {
     var isSuccess = false;
     try {
         requestData.setRequestInfo({ RqType: rqType, RqName: rqName });
@@ -669,7 +667,7 @@ async function GetAllInfo(jsFunc, rqType, rqName, requestData, getBasicInfo, get
 
         if (isTerminalInfoOK) {
             var checkInfo = await GetCheckObjectFromIG();
-            var isCheckInfoOK = await GetCheckBasicInfo(jsFunc, requestData, checkInfo, getRevInfo);
+            var isCheckInfoOK = await GetCheckBasicInfo(jsFunc, requestData, checkInfo);
             if (!isTest) await parent.TerminalApi.Log(JSProgName, "isCheckInfoOK OpenCheck:" + isCheckInfoOK);
 
             if (isCheckInfoOK && !getBasicInfo) {
@@ -702,7 +700,7 @@ async function MemberInquiry() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -729,7 +727,7 @@ async function MemberDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -768,7 +766,7 @@ async function MemberDiscount() {
                     // #region 20251216 Added code, Result Text File required now to call VoucherPayment.exe
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "MemberDiscount2", requestData2, false, false, true);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "MemberDiscount2", requestData2, false, false);
 
                     if (isProceed) {
                         //Need the set DataString Value for the Result Text Request File
@@ -829,7 +827,7 @@ async function EmployeeDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -868,7 +866,7 @@ async function EmployeeDiscount() {
                     // #region 20251217 Added code, Result Text File required
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "EmployeeDiscount2", requestData2, false, false, true);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "EmployeeDiscount2", requestData2, false, false);
 
                     if (isProceed) {
                         //Need the set DataString Value for the Result Text Request File
@@ -929,7 +927,7 @@ async function CheckDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -965,7 +963,7 @@ async function CheckDiscount() {
                     // #region 20251217 Added code, Result Text File required
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "CheckDiscount2", requestData2, false, false, true);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CheckDiscount2", requestData2, false, false);
 
                     if (isProceed) {
                         //Need the set DataString Value for the Result Text Request File
@@ -1026,7 +1024,7 @@ async function ItemDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, true, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, true);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1083,7 +1081,7 @@ async function SalesGiftGC() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1108,7 +1106,7 @@ async function PaidGiftGC() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1133,7 +1131,7 @@ async function RptCheckByTable() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1158,7 +1156,7 @@ async function RoomDetailSearch() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             //Add Code to ask for additional information
@@ -1197,7 +1195,7 @@ async function CCDiscount() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1234,7 +1232,7 @@ async function CCDiscount() {
                     // #region 20251217 Added code, Result Text File required
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "CCDiscount2", requestData2, false, false, true);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CCDiscount2", requestData2, false, false);
 
                     if (isProceed) {
                         //Need the set DataString Value for the Result Text Request File
@@ -1295,7 +1293,7 @@ async function CCDiscountNew() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1332,7 +1330,7 @@ async function CCDiscountNew() {
                     // #region 20251217 Added code, Result Text File required
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "CCDiscountNew2", requestData2, false, false, true);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CCDiscountNew2", requestData2, false, false);
 
                     if (isProceed) {
                         //Need the set DataString Value for the Result Text Request File
@@ -1393,7 +1391,7 @@ async function CCLookupDc() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             //Add Code to ask for additional information
@@ -1437,7 +1435,7 @@ async function CCLookupDc() {
 
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "CCLookupDc2", requestData2, false, false, false);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "CCLookupDc2", requestData2, false, false);
 
                     if (isProceed) {
                         //Add Code to ask for additional information
@@ -1472,7 +1470,7 @@ async function PrintCardSlip() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             //Add Code to ask for additional information
@@ -1510,7 +1508,7 @@ async function LastCardSlip() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1535,7 +1533,7 @@ async function ManualCard() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1560,7 +1558,7 @@ async function ReopenErrCard() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1586,7 +1584,7 @@ async function CEPSettings() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1611,7 +1609,7 @@ async function ParnasRewardMembership() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1662,7 +1660,7 @@ async function ParnasRewardMembership() {
                     // #region 20251217 Added code, Result Text File required
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "ParnasRewardMembership2", requestData2, false, false, true);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "ParnasRewardMembership2", requestData2, false, false);
 
                     if (isProceed) {
                         //Need the set DataString Value for the Result Text Request File
@@ -1732,7 +1730,7 @@ async function HelpGuideFor12UX() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, false);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1755,7 +1753,7 @@ async function PostItem() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1801,7 +1799,7 @@ async function PreSaveCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, false);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1824,7 +1822,7 @@ async function PostSaveCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, false);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1847,7 +1845,7 @@ async function PreVoidCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -1880,7 +1878,7 @@ async function PreVoidItem() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, true, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, true);
 
         if (isProceed) {
             var DataString0 = await parent.TerminalApi.GetDataString(0);
@@ -1933,7 +1931,7 @@ async function PostVoidItem() {
 
     try {
 
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             var DataString0 = await parent.TerminalApi.GetDataString(0);
@@ -1990,7 +1988,7 @@ async function PreCancelCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, false);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2029,7 +2027,7 @@ async function PreTender(event) {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             //Add Code to ask for additional information
@@ -2075,7 +2073,7 @@ async function PreTender(event) {
 
                     //Get Latest Check information after applying the discount if any
                     var requestData2 = new RequestDataStructure();
-                    isProceed = await GetAllInfo(jsFunc, rqType, "PreTender2", requestData2, false, false, true);
+                    isProceed = await GetAllInfo(jsFunc, rqType, "PreTender2", requestData2, false, false);
 
                     if (isProceed) {
                         //Add Code to ask for additional information
@@ -2122,7 +2120,7 @@ async function PostTender(event) {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, true);
 
         if (isProceed) {
             //Add Code to ask for additional information
@@ -2179,7 +2177,7 @@ async function PreAgysCardPayment() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2216,7 +2214,7 @@ async function PostAgysCardPayment() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2239,7 +2237,7 @@ async function PreClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2262,7 +2260,7 @@ async function PostClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2285,7 +2283,7 @@ async function PreReOpenClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2319,7 +2317,7 @@ async function PostReOpenClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             //20260129 Added to get existing Check DataString before processing
@@ -2382,7 +2380,7 @@ async function PreCustomReOpenClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2419,7 +2417,7 @@ async function PostCustomReOpenClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false, true);
+        var isProceed = await GetAllInfo(jsFunc, rqType, rqName, requestData, true, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2442,7 +2440,7 @@ async function PrePrintClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2465,7 +2463,7 @@ async function PostPrintClosedCheck() {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             const sanizedRqData = deepStringify(requestData);
@@ -2488,7 +2486,7 @@ async function PrepareCheckReceipt(event) {
     var requestData = new RequestDataStructure();
 
     try {
-        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false, true);
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
 
         if (isProceed) {
             var DataString0 = await parent.TerminalApi.GetDataString(0);

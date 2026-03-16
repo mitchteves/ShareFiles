@@ -44,6 +44,7 @@ const isDisabled = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_493", "HelpGuideFor12UX");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostSaveCheck", "PostSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
             //parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreCancelCheck", "PreCancelCheck");
@@ -1261,10 +1262,6 @@ async function CCDiscount() {
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
                             sMsg04: responseData.sMsg04,
-                            sMsg05: responseData.sMsg05,
-                            sMsg06: responseData.sMsg06,
-                            sMsg07: responseData.sMsg07,
-                            sMsg08: responseData.sMsg08,
                             ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
                             ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
                             ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC
@@ -1363,10 +1360,6 @@ async function CCDiscountNew() {
                         requestData2.setAdditionalInfo({
                             MsgType: responseData.MsgType,
                             sMsg04: responseData.sMsg04,
-                            sMsg05: responseData.sMsg05,
-                            sMsg06: responseData.sMsg06,
-                            sMsg07: responseData.sMsg07,
-                            sMsg08: responseData.sMsg08,
                             ChkTaxAmt_BeforeDC: responseData.ChkTaxAmt_BeforeDC,
                             ChkGndTot_BeforeDC: responseData.ChkGndTot_BeforeDC,
                             ChkSvcChg_BeforeDC: responseData.ChkSvcChg_BeforeDC
@@ -1803,6 +1796,29 @@ async function PostItem() {
 // #region "PreSaveCheck", "PreSaveCheck"
 async function PreSaveCheck() {
     var jsFunc = "PreSaveCheck";
+    var requestData = new RequestDataStructure();
+
+    try {
+        var isProceed = await GetAllInfo(jsFunc, jsFunc, jsFunc, requestData, false, false);
+
+        if (isProceed) {
+            const sanizedRqData = deepStringify(requestData);
+            const logJsonInfo = JSON.stringify(sanizedRqData, null, 2);
+            await logToWorker(jsFunc + BR + logJsonInfo, LogLevel.DEBUG);
+            var responseData = await processRequest(sanizedRqData);
+
+            if (!responseData.IsSuccess && !isTest) {
+                await parent.TerminalApi.ShowCustomAlert(jsFunc,
+                    JSON.stringify(responseData.ResponseMessage, null, 2), 2);
+            } else { await logToWorker(jsFunc + CL + responseData.ResponseMessage, LogLevel.INFO); }
+        } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }
+    } catch (error) { await logToWorker(jsFunc + BR + error, LogLevel.ERROR); }
+}
+// #endregion
+
+// #region "PostSaveCheck", "PostSaveCheck" Added 2026-03-16
+async function PostSaveCheck() {
+    var jsFunc = "PostSaveCheck";
     var requestData = new RequestDataStructure();
 
     try {

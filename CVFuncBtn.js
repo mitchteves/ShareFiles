@@ -2006,10 +2006,20 @@ async function PreCancelCheck() {
             //20260119 Regardless of success or failure, run the terminal function if indicated
             if (responseData.RunTermFunc) {
                 var checkInfo = await GetCheckObjectFromIG();
-                var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
 
-                await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
-                    JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+                if (responseData.TermFuncNo == 56)
+                {
+                    var saveCheckStatus = await parent.TerminalApi.SaveCheck();
+
+                    await logToWorker(jsFunc + CL + "|SaveCheck API Function Execution Status:" +
+                        JSON.stringify(saveCheckStatus, null, 2), LogLevel.INFO);
+                }
+                else {
+                    var runTrmFunc = await parent.TerminalApi.RunTerminalFunction(responseData.TermFuncNo, checkInfo); //Void Item
+
+                    await logToWorker(jsFunc + CL + "|RunTerminalFunction Status:" +
+                        JSON.stringify(runTrmFunc, null, 2), LogLevel.INFO);
+                }
             }
 
         } else { await logToWorker(jsFunc + BR + "GetAllInfo Failed.", LogLevel.INFO); }

@@ -4,7 +4,6 @@ const CL = ":";
 const JSProgName = "CVFuncBtn"; //This class will contain all custom scripts
 const LogLevel = Object.freeze({ TRACE: "T", DEBUG: "D", INFO: "I", WARN: "W", ERROR: "E", CRITICAL: "C" });
 const isTest = false;
-const isDisabled = false;
 
 //#region 12UX Custom Scripting Register/Subscribe for IG Bundling
 (function Register() {
@@ -43,18 +42,15 @@ const isDisabled = false;
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostFunctionButton_492", "PostCustomReOpenClosedCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreFunctionButton_493", "HelpGuideFor12UX");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostItem", "PostItem");
-            //parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
-            //parent.TerminalApi.Subscribe(window.frameElement.id, "PostSaveCheck", "PostSaveCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PreSaveCheck", "PreSaveCheck");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PostSaveCheck", "PostSaveCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidCheck", "PreVoidCheck");
             //parent.TerminalApi.Subscribe(window.frameElement.id, "PreVoidChkEntities", "PreVoidItem");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreCancelCheck", "PreCancelCheck");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PreTender", "PreTender");
             parent.TerminalApi.Subscribe(window.frameElement.id, "PostTender", "PostTender");
-            //20260312 Add option to disable 
-            if (!isDisabled) {
-                parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceipt", "PrepareCheckReceipt");
-                parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceiptV2", "PrepareCheckReceipt");
-            }
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceipt", "PrepareCheckReceipt");
+            parent.TerminalApi.Subscribe(window.frameElement.id, "PrepareCheckReceiptV2", "PrepareCheckReceipt");
         }
     }
     catch (error) { console.log("Register catch: " + error); }

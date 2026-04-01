@@ -2542,7 +2542,14 @@ async function PrepareCheckReceipt(event) {
                 for (var customText of responseData.CR_AfterSubTotal) {
                     await parent.TerminalApi.ReceiptAppendText(customText);}}
 
-            await parent.TerminalApi.ReceiptTenders();
+            //20260401 Added option to Replace Tenders
+            if (responseData.ReplaceTenders) {
+                for (var customText of responseData.CR_NewTenders) {
+                    await parent.TerminalApi.ReceiptAppendText(customText);
+                }
+            }
+            else { await parent.TerminalApi.ReceiptTenders(); }
+            
             if (responseData.AddCustomReceipt) {
                 for (var customText of responseData.CR_AfterTenders) {
                     await parent.TerminalApi.ReceiptAppendText(customText);}}
@@ -2566,6 +2573,7 @@ async function PrepareCheckReceipt(event) {
 }
 // #endregion
 
+//20260319 Testing Github Sync in CV Org Repo
 if (isTest) MemberInquiry();
 if (isTest) MemberDiscount();
 if (isTest) RptCheckByTable();
